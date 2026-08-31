@@ -1,40 +1,67 @@
 # Project Strategy TOR Dashboard
 
-A monthly team reporting pack that tracks live delivery against what each project's
+A team reporting pack that tracks live delivery against what each project's
 **Terms of Reference** actually committed to — scope, deliverables, milestones, budget,
 governance (RACI) and risk.
+
+It runs at **two cadences off one dashboard**:
+
+| Cadence | Source | Purpose |
+|---|---|---|
+| **Daily** | `Daily Log` | Spot slippage inside the month, while there's still time to act |
+| **Monthly** | `Monthly Log` | The governance / SteerCo record, and the monthly trend history |
+
+Set `Dashboard!C3` to Daily or Monthly and `Dashboard!C4` to the reporting date — every
+metric, tile and RAG follows.
 
 | File | What it is |
 |---|---|
 | `Project_Strategy_TOR_Dashboard.xlsx` | The workbook. This is the deliverable. |
 | `build_tor_dashboard.py` | Generator that produces the workbook from scratch. |
 
-## The monthly cycle
+## How the two cadences join
 
-1. **Update the registers** — add or amend rows on *Deliverables & RACI* and *Risks & Issues*
-   as things move during the month.
-2. **Add the month's rows** — on *Monthly Log*, one row per active project. Copy the previous
-   month's block down and update the numbers. **All figures are cumulative to date**, not in-month.
-3. **Copy the live counts** — Open Risks and High Risks from *Risks & Issues*, RACI Gaps from
-   *Deliverables & RACI*. Freezing them into the log is what gives the trend charts their history;
-   the registers only ever show today.
-4. **Set the reporting month** — *Dashboard* cell `C4`, first day of the month. Everything
-   recalculates.
-5. **Review** — walk the Dashboard exception table, then *Charts* for the trend. Red and Amber
-   rows are the agenda.
+Both logs hold the **same cumulative-to-date figures**, so the last daily row of a month
+*is* that month's monthly row. That is a property of the design, not a convention to
+remember: the shipped example data demonstrates it, with Daily @ 2026-08-31 producing
+byte-identical figures to Monthly @ 2026-08 across every project and every portfolio tile.
+
+The **month-end roll-up** block on `Daily Log` (set the date in `R3`) reads any date and
+shows each project's figures ready to copy into the Monthly Log — no double entry, no drift
+between the two views.
+
+## The daily routine — two minutes per project
+
+1. On `Daily Log`, copy yesterday's block down, change the date, update what moved.
+   Figures are **cumulative to date**, not in-day.
+2. On `Dashboard`, set Cadence to Daily and today's date in `C4`. Red and Amber rows are
+   today's problem.
+
+## The monthly cycle — five steps
+
+1. **Update the registers** — `Deliverables & RACI` and `Risks & Issues` as things move.
+2. **Roll the month up** — put the month-end date in `Daily Log!R3` and copy the resulting
+   row into `Monthly Log`. (Teams that don't log daily just type the month's figures
+   straight into `Monthly Log`.)
+3. **Copy the live counts** — Open Risks and High Risks from `Risks & Issues`, RACI Gaps
+   from `Deliverables & RACI`. Freezing them into the log is what gives the trend charts
+   their history; the registers only ever show today.
+4. **Set cadence and month** — `Dashboard!C3` = Monthly, `C4` = first day of the month.
+5. **Review** — walk the Dashboard exception table, then `Charts`.
 
 ## Tabs
 
 | Tab | Purpose |
 |---|---|
-| **Read Me** | Cycle, metric definitions, colour legend, capacity notes. |
+| **Read Me** | Both cadences, metric definitions, colour legend, capacity notes. |
 | **TOR Register** | The approved baseline: objective, scope boundaries, dates, budget, planned milestone and deliverable counts. Change only via an approved CR. |
-| **Monthly Log** | The data-entry surface — the only sheet that needs touching in a normal month. |
+| **Daily Log** | Day-by-day entry, one row per project per working day. Carries the month-end roll-up block. |
+| **Monthly Log** | One row per project per month. The governance record and the source of the monthly trend charts. |
 | **Deliverables & RACI** | TOR deliverables mapped to clauses with R/A/C/I. A blank *Accountable* is counted automatically as a governance gap. |
 | **Risks & Issues** | Register with likelihood × impact scoring, derived severity, and live per-project counts. |
-| **Dashboard** | The monthly view: portfolio tiles plus a per-project table with a calculated RAG. |
-| **Charts** | Portfolio trend across months, plus per-project comparisons. |
-| **Lists** | Dropdown values. |
+| **Dashboard** | Portfolio tiles plus a per-project table, for whichever cadence `C3` selects. |
+| **Charts** | Monthly trend, per-project comparisons, and daily trend for the current month — 8 charts. |
+| **Lists** | Dropdown values, including the Daily / Monthly cadence list. |
 
 ## Metric definitions
 
@@ -52,45 +79,56 @@ governance (RACI) and risk.
 discussion — in the shipped example data, P-005 is self-reported Green but calculates Amber
 on an 85.7% milestone hit rate.
 
-Thresholds are editable inputs (yellow cells, `Dashboard!C7:C11`), defaulting to:
-milestone hit rate Amber below 90% / Red below 75%; budget used Amber above 95% / Red above 100%;
-2 or more unclosed high-severity risks forces Red.
+Thresholds are editable inputs (yellow cells), defaulting to: milestone hit rate Amber below
+90% / Red below 75%; budget used Amber above 95% / Red above 100%; 2 or more unclosed
+high-severity risks forces Red.
 
 ## Colour convention
 
 - **Blue text** — a value you type. Safe to edit.
-- **Yellow fill** — key input you are expected to set (reporting month, RAG thresholds).
+- **Yellow fill** — key input you are expected to set (cadence, reporting date, RAG
+  thresholds, roll-up date).
 - **Black text** — formula on that sheet. Don't overwrite.
 - **Green text** — pulled from another sheet. Don't overwrite.
 
 ## Example data
 
-The workbook ships with **six months of example data for five fictional projects** so the
-formulas and charts can be seen working. Names and figures are invented; there is no external
-data source behind them. Delete row 4 downwards on *TOR Register*, *Monthly Log*,
-*Deliverables & RACI* and *Risks & Issues* before real use.
+The workbook ships with example data for **five fictional projects**: six months on
+`Monthly Log` and the 21 working days of August 2026 on `Daily Log`. Names and figures are
+invented; there is no external data source behind them. Delete row 4 downwards on
+*TOR Register*, *Daily Log*, *Monthly Log*, *Deliverables & RACI* and *Risks & Issues*
+before real use.
 
-The example is internally consistent: every August snapshot in the Monthly Log reconciles
-exactly with the live counts on the registers, demonstrating step 3 of the cycle.
+The example is internally consistent in two ways worth checking as a smoke test:
+
+- Daily @ 2026-08-31 equals Monthly @ 2026-08 for every project and every portfolio tile.
+- Every August snapshot reconciles exactly with the live register counts, demonstrating
+  step 3 of the monthly cycle.
 
 ## Capacity
 
-Formulas already span the full ranges, so new rows are picked up with no formula editing:
-TOR Register 40 projects · Monthly Log 300 rows · Deliverables and Risks 200 rows each ·
-Charts trend 24 months. The Dashboard table is driven off the TOR Register — add a project
-there and it appears automatically.
+Formulas already span the full ranges, so new rows need no formula editing:
+TOR Register 40 projects · Daily Log 1,500 rows · Monthly Log 300 rows · Deliverables and
+Risks 200 rows each · monthly trend 24 months · daily trend 65 days. The Dashboard table and
+the roll-up block are both driven off the TOR Register — add a project there and it appears
+automatically.
 
-Enter months as the **first day of the month** (e.g. `2026-09-01`); the Dashboard matches on
-the exact date, so a mid-month date will not be picked up.
+Enter dates as the **actual date** on `Daily Log`, and the **first day of the month** on
+`Monthly Log` (e.g. `2026-09-01`); the Dashboard matches on the exact date, so a mid-month
+date won't be picked up in Monthly cadence.
+
+The per-project comparison block on `Charts` is sized to the projects present when the
+workbook was generated. Re-run the generator after adding projects if you want them in
+those two charts; the trend charts and the Dashboard extend on their own.
 
 ## Regenerating
 
 Edit `build_tor_dashboard.py` for structural change; edit the `.xlsx` directly for
-month-to-month data. Regenerating overwrites the workbook.
+day-to-day data. Regenerating overwrites the workbook.
 
 ```bash
 python3 build_tor_dashboard.py
 ```
 
-Requires `openpyxl`. The workbook contains 1,802 formulas and recalculates clean with zero
+Requires `openpyxl`. The workbook contains 4,432 formulas and recalculates clean with zero
 formula errors.
