@@ -1,0 +1,601 @@
+<title>TOR Reporting Bottleneck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  /* ---- light palette: the workbook's own colour convention ----
+     blue = you type it · yellow = key input · green = pulled from another sheet
+     plus the RAG the dashboard already speaks in.                        */
+  :root {
+    --ground:      #F5F7FA;
+    --panel:       #FFFFFF;
+    --panel-2:     #EDF1F6;
+    --ink:         #131A24;
+    --ink-2:       #47546A;
+    --ink-3:       #74829A;
+    --rule:        #D3DBE6;
+    --rule-soft:   #E3E9F1;
+    --navy:        #1F3352;
+    --constraint:  #B3261E;
+    --constraint-w:#FBEAE8;
+    --manual:      #B8860B;
+    --manual-w:    #FBF2DC;
+    --auto:        #1A5FB4;
+    --auto-w:      #E6EFFA;
+    --freed:       #1B7A3E;
+    --freed-w:     #E4F3E9;
+    --shadow:      0 1px 2px rgba(19,26,36,.06), 0 8px 24px -12px rgba(19,26,36,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #101419;
+      --panel:       #171C24;
+      --panel-2:     #1E242E;
+      --ink:         #E7ECF4;
+      --ink-2:       #A7B3C6;
+      --ink-3:       #7C8899;
+      --rule:        #2B333F;
+      --rule-soft:   #232A34;
+      --navy:        #9DB6DC;
+      --constraint:  #F2857A;
+      --constraint-w:#2E1A18;
+      --manual:      #E2B457;
+      --manual-w:    #2B2415;
+      --auto:        #7FB0EE;
+      --auto-w:      #16212F;
+      --freed:       #6BC98D;
+      --freed-w:     #14251A;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #101419;
+    --panel:       #171C24;
+    --panel-2:     #1E242E;
+    --ink:         #E7ECF4;
+    --ink-2:       #A7B3C6;
+    --ink-3:       #7C8899;
+    --rule:        #2B333F;
+    --rule-soft:   #232A34;
+    --navy:        #9DB6DC;
+    --constraint:  #F2857A;
+    --constraint-w:#2E1A18;
+    --manual:      #E2B457;
+    --manual-w:    #2B2415;
+    --auto:        #7FB0EE;
+    --auto-w:      #16212F;
+    --freed:       #6BC98D;
+    --freed-w:     #14251A;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+  .col  { max-width: 660px; }
+
+  h1, h2, h3, .disp {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700; letter-spacing: -.02em; text-wrap: balance;
+  }
+  .mono, .lbl, table, .num {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .lbl {
+    font-size: 11px; font-weight: 600; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ---------------------------------------------------------- masthead -- */
+  header { padding: 64px 0 40px; border-bottom: 1px solid var(--rule); }
+  header .lbl { color: var(--navy); }
+  h1 { font-size: clamp(34px, 5.4vw, 54px); line-height: 1.04; margin: 14px 0 0; }
+  h1 em { font-style: normal; color: var(--constraint); }
+  .standfirst {
+    max-width: 620px; margin: 20px 0 0; font-size: 19px; color: var(--ink-2);
+  }
+  .keyline {
+    display: flex; flex-wrap: wrap; gap: 0; margin-top: 40px;
+    border: 1px solid var(--rule); border-radius: 3px;
+    background: var(--panel); box-shadow: var(--shadow); overflow: hidden;
+  }
+  .keyline > div {
+    flex: 1 1 150px; padding: 18px 20px;
+    border-right: 1px solid var(--rule-soft);
+  }
+  .keyline > div:last-child { border-right: 0; }
+  .keyline .v {
+    font-family: Archivo, sans-serif; font-weight: 700; font-size: 30px;
+    line-height: 1.1; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+  }
+  .keyline .k { font-size: 13px; color: var(--ink-2); margin-top: 4px; line-height: 1.35;
+                font-family: "IBM Plex Mono", monospace; }
+  .v.bad   { color: var(--constraint); }
+  .v.good  { color: var(--freed); }
+
+  /* --------------------------------------------------------- sections -- */
+  section { padding-top: 62px; }
+  h2 { font-size: 27px; margin: 0 0 6px; }
+  h2 .step {
+    font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600;
+    color: var(--ink-3); letter-spacing: .1em; display: block; margin-bottom: 9px;
+  }
+  .dek { color: var(--ink-2); margin: 0 0 26px; max-width: 660px; }
+  p { max-width: 660px; }
+  h3 { font-size: 18px; margin: 34px 0 8px; }
+
+  /* -------------------------------------------------- proportional bar -- */
+  .scale { margin: 8px 0 0; }
+  .barrow { margin-bottom: 26px; }
+  .barhead {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; margin-bottom: 7px;
+  }
+  .barhead .t { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; }
+  .barhead .n { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--ink-2);
+                font-variant-numeric: tabular-nums; }
+  .bar { display: flex; height: 46px; border-radius: 2px; overflow: hidden;
+         border: 1px solid var(--rule); background: var(--panel); }
+  .bar.tobe { border-color: var(--freed); }
+  .seg { position: relative; display: flex; align-items: center; justify-content: center;
+         font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600;
+         overflow: hidden; white-space: nowrap; border-right: 1px solid var(--panel); }
+  .seg:last-child { border-right: 0; }
+  .seg.entry   { background: var(--constraint); color: #fff; }
+  .seg.read    { background: var(--manual);     color: #fff; }
+  .seg.judge   { background: var(--navy);       color: var(--panel); }
+  .seg.admin   { background: var(--panel-2);    color: var(--ink-2); }
+  .seg.tiny    { background: var(--panel-2); }
+  .seg.entry2  { background: var(--auto);       color: #fff; }
+  .rest {
+    flex: 1 1 auto; display: flex; align-items: center; padding-left: 14px;
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--freed);
+    border-left: 2px dashed var(--freed); margin-left: -1px; font-weight: 600;
+  }
+  .barfoot { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+  .swatch { display: flex; align-items: center; gap: 7px; font-size: 12px;
+            font-family: "IBM Plex Mono", monospace; color: var(--ink-2); }
+  .swatch i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+  /* --------------------------------------------------------- diagrams -- */
+  figure { margin: 0; padding: 26px 0 0; }
+  .figbox {
+    border: 1px solid var(--rule); border-radius: 3px; background: var(--panel);
+    box-shadow: var(--shadow); padding: 22px 18px 10px; overflow-x: auto;
+  }
+  .figbox svg { display: block; min-width: 720px; width: 100%; height: auto;
+                color: var(--ink); }
+  figcaption { font-size: 14px; color: var(--ink-2); margin-top: 12px; max-width: 700px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* ----------------------------------------------------------- tables -- */
+  .tblwrap { overflow-x: auto; margin: 22px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
+  caption { text-align: left; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+            color: var(--ink-3); padding-bottom: 9px; font-weight: 600; }
+  th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--rule-soft); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--ink-3); font-weight: 600; font-size: 11px;
+             letter-spacing: .09em; text-transform: uppercase;
+             border-bottom: 1px solid var(--rule); }
+  tbody tr.hot td { background: var(--constraint-w); color: var(--constraint); font-weight: 600; }
+  tbody tr.hit td { background: var(--freed-w); color: var(--freed); font-weight: 600; }
+  tbody tr.flat td { color: var(--ink-3); }
+  tfoot td { border-top: 1px solid var(--rule); border-bottom: 0; font-weight: 600;
+             padding-top: 11px; }
+  td.neg { color: var(--freed); }
+
+  /* ------------------------------------------------------------ notes -- */
+  .pull {
+    margin: 30px 0 0; padding: 20px 24px; background: var(--panel);
+    border: 1px solid var(--rule); border-left: 3px solid var(--constraint);
+    border-radius: 3px; box-shadow: var(--shadow); max-width: 700px;
+  }
+  .pull.calm { border-left-color: var(--navy); }
+  .pull .lbl { display: block; margin-bottom: 7px; }
+  .pull p { margin: 0; font-size: 16px; max-width: none; }
+  .pull p + p { margin-top: 10px; }
+
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+           gap: 16px; margin-top: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 3px;
+          padding: 18px 20px; box-shadow: var(--shadow); }
+  .card .n { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600;
+             color: var(--auto); letter-spacing: .08em; }
+  .card h4 { font-family: Archivo, sans-serif; font-size: 16px; font-weight: 600;
+             margin: 7px 0 6px; letter-spacing: -.01em; }
+  .card p { font-size: 14.5px; color: var(--ink-2); margin: 0; max-width: none; }
+  .card .save { display: inline-block; margin-top: 11px; font-family: "IBM Plex Mono", monospace;
+                font-size: 12px; font-weight: 600; color: var(--freed);
+                background: var(--freed-w); padding: 3px 8px; border-radius: 2px; }
+
+  footer { margin-top: 74px; padding-top: 22px; border-top: 1px solid var(--rule);
+           font-size: 13px; color: var(--ink-3); font-family: "IBM Plex Mono", monospace; }
+  footer code { background: var(--panel-2); padding: 2px 6px; border-radius: 2px;
+                color: var(--ink-2); }
+  a { color: var(--auto); }
+  a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--auto); outline-offset: 3px; }
+
+  @media (max-width: 620px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px 72px; }
+    header { padding: 44px 0 32px; }
+    .seg { font-size: 0; }
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="lbl">Project Strategy TOR Dashboard · process analysis</span>
+  <h1>Three quarters of the reporting month is <em>one step</em>.</h1>
+  <p class="standfirst">
+    The TOR reporting cycle costs 19.4 hours of analyst time a month at a 20-project
+    portfolio. 840 of those 1,163 minutes are spent typing figures the workbook has
+    already calculated. Here is the constraint, the evidence, and the cycle without it.
+  </p>
+
+  <div class="keyline">
+    <div><div class="v bad">19.4 h</div><div class="k">as-is, per month<br>20 projects</div></div>
+    <div><div class="v good">3.9 h</div><div class="k">to-be, per month<br>same portfolio</div></div>
+    <div><div class="v">79.7%</div><div class="k">reduction at 20<br>80.3% at 25</div></div>
+    <div><div class="v">66%</div><div class="k">of the typing is<br>already-known data</div></div>
+  </div>
+</header>
+
+<!-- ============================================================ 1 ===== -->
+<section>
+  <h2><span class="step">01 — Where the time goes</span>One step, drawn to scale</h2>
+  <p class="dek">
+    Both bars below are drawn on the same scale, so the second one's length is the result.
+    Each segment is a step in the cycle.
+  </p>
+
+  <div class="scale">
+    <div class="barrow">
+      <div class="barhead">
+        <span class="t">As-is — 1,163 min</span>
+        <span class="n">19.4 h / month</span>
+      </div>
+      <div class="bar">
+        <div class="seg entry" style="width:72.23%" title="Daily Log data entry — 840 min">Daily Log data entry · 840 min · 72%</div>
+        <div class="seg read"  style="width:10.83%" title="Daily dashboard read — 126 min">126</div>
+        <div class="seg judge" style="width:6.88%"  title="M1 Update registers — 80 min">80</div>
+        <div class="seg admin" style="width:2.67%"  title="M5 Review — 31 min">31</div>
+        <div class="seg admin" style="width:2.58%"  title="M2 Roll-up — 30 min">30</div>
+        <div class="seg admin" style="width:2.58%"  title="M3 Copy live counts — 30 min">30</div>
+        <div class="seg admin" style="width:2.15%"  title="M6 Reconcile — 25 min">25</div>
+        <div class="seg tiny"  style="width:0.09%"  title="M4 Set cadence — 1 min"></div>
+      </div>
+    </div>
+
+    <div class="barrow">
+      <div class="barhead">
+        <span class="t">To-be — 236 min</span>
+        <span class="n">3.9 h / month</span>
+      </div>
+      <div style="display:flex">
+        <div class="bar tobe" style="width:20.31%">
+          <div class="seg entry2" style="width:31.83%" title="Daily Log data entry — 75 min">75</div>
+          <div class="seg read"   style="width:17.78%" title="Daily dashboard read — 42 min">42</div>
+          <div class="seg judge"  style="width:33.87%" title="M1 Update registers — 80 min">80</div>
+          <div class="seg admin"  style="width:13.13%" title="M5 Review — 31 min">31</div>
+          <div class="seg admin"  style="width:1.27%"  title="M2 Roll-up — 3 min"></div>
+          <div class="seg admin"  style="width:2.12%"  title="M6 Spot-check — 5 min"></div>
+        </div>
+        <div class="rest">927 minutes returned to the team</div>
+      </div>
+    </div>
+
+    <div class="barfoot">
+      <span class="swatch"><i style="background:var(--constraint)"></i>the constraint</span>
+      <span class="swatch"><i style="background:var(--auto)"></i>same step, automated</span>
+      <span class="swatch"><i style="background:var(--manual)"></i>reading the dashboard</span>
+      <span class="swatch"><i style="background:var(--navy)"></i>judgement — protected</span>
+      <span class="swatch"><i style="background:var(--panel-2);border:1px solid var(--rule)"></i>monthly admin</span>
+    </div>
+  </div>
+
+  <div class="pull">
+    <span class="lbl">Why fixing anything else does not work</span>
+    <p>
+      Delete <b>M2, M3, M4 and M6 entirely</b> — four whole steps, every monthly task short
+      of the registers and the review — and the month still costs <b>17.9 of its 19.4 hours</b>.
+      A 7.4% saving for deleting half the monthly cycle.
+    </p>
+    <p>The constraint sets the pace. Effort spent anywhere else is invisible.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 2 ===== -->
+<section>
+  <h2><span class="step">02 — As-is</span>The workbook calculates it, then a person retypes it</h2>
+  <p class="dek">
+    Daily Log data entry is the only step that runs <em>per project × per working day</em>.
+    At 20 projects that is 420 rows and 5,880 hand-entered fields a month.
+  </p>
+
+  <figure>
+    <div class="figbox">
+      <svg viewBox="0 0 900 330" role="img"
+           aria-label="As-is flow: the Deliverables and RACI register and the Risks and Issues register both compute counts live, but a person reads them on screen and retypes them into the Daily Log row, once per project per working day — 420 times a month — and then retypes the same counts a second time into the Monthly Log at month end.">
+        <defs>
+          <marker id="ah-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--constraint)"/>
+          </marker>
+          <marker id="ah-n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <text x="20" y="26" font-family="IBM Plex Mono, monospace" font-size="11"
+              font-weight="600" letter-spacing="1.4" fill="var(--ink-3)">SOURCE OF TRUTH</text>
+        <rect x="20" y="40" width="200" height="66" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="34" y="66" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Deliverables &amp; RACI</text>
+        <text x="34" y="86" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">RACI Gaps, live</text>
+
+        <rect x="20" y="126" width="200" height="66" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="34" y="152" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Risks &amp; Issues</text>
+        <text x="34" y="172" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">Open / High Risks, live</text>
+
+        <path d="M220,73 C272,73 270,108 316,116" fill="none" stroke="var(--constraint)" stroke-width="1.7"
+              stroke-dasharray="5 4" marker-end="url(#ah-r)"/>
+        <path d="M220,159 C272,159 270,146 316,140" fill="none" stroke="var(--constraint)" stroke-width="1.7"
+              stroke-dasharray="5 4" marker-end="url(#ah-r)"/>
+        <text x="268" y="118" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              font-weight="600" fill="var(--constraint)">typed in</text>
+        <text x="268" y="131" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              font-weight="600" fill="var(--constraint)">by hand</text>
+
+        <rect x="318" y="52" width="252" height="128" rx="3" fill="var(--constraint-w)"
+              stroke="var(--constraint)" stroke-width="2.2"/>
+        <text x="334" y="78" font-family="Archivo, sans-serif" font-size="15" font-weight="700" fill="var(--constraint)">Daily Log row</text>
+        <text x="334" y="100" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">14 fields — every one typed</text>
+        <text x="334" y="120" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">5 already computed above</text>
+        <text x="334" y="140" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">6 unchanged since yesterday</text>
+        <line x1="334" y1="152" x2="554" y2="152" stroke="var(--constraint)" stroke-opacity=".3"/>
+        <text x="334" y="169" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600"
+              fill="var(--constraint)">2.0 min × 20 projects × 21 days</text>
+
+        <path d="M340,52 C340,18 548,18 548,52" fill="none" stroke="var(--constraint)"
+              stroke-width="1.6" marker-end="url(#ah-r)"/>
+        <text x="444" y="20" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11"
+              font-weight="600" fill="var(--constraint)">repeated 420 times a month = 840 min</text>
+
+        <path d="M570,116 L662,116" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ah-n)"/>
+        <text x="616" y="107" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              fill="var(--ink-2)">M2 roll-up</text>
+
+        <rect x="664" y="76" width="216" height="80" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="678" y="102" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Monthly Log</text>
+        <text x="678" y="122" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">the governance record,</text>
+        <text x="678" y="141" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">frozen for the trend charts</text>
+
+        <path d="M120,192 C120,265 640,292 762,180" fill="none" stroke="var(--constraint)" stroke-width="1.7"
+              stroke-dasharray="5 4" marker-end="url(#ah-r)"/>
+        <text x="430" y="308" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5"
+              font-weight="600" fill="var(--constraint)">M3 — the same counts typed in a second time · 30 min</text>
+      </svg>
+    </div>
+    <figcaption>
+      <b>The same figures cross the gap by hand twice.</b> Both registers already compute the
+      counts the log needs — the generator even labels those columns
+      <span class="mono">“→ copy to log”</span>. A person carries them across, once per project
+      per working day into the Daily Log, and again at month end into the Monthly Log. The monthly
+      reconciliation step exists to catch what that re-keying gets wrong.
+    </figcaption>
+  </figure>
+
+  <div class="tblwrap">
+    <table>
+      <caption>What is inside one Daily Log row — 20 projects, 21 working days</caption>
+      <thead>
+        <tr><th>Of the 14 fields in a row</th><th>Fields</th><th>Per month</th><th>Where it already exists</th></tr>
+      </thead>
+      <tbody>
+        <tr class="hot"><td>Computed live by the registers</td><td>5</td><td>2,100</td><td>One sheet away</td></tr>
+        <tr class="hot"><td>Unchanged since yesterday</td><td>6</td><td>1,764</td><td>The row directly above</td></tr>
+        <tr class="flat"><td>Genuinely new information</td><td>3</td><td>2,016</td><td>The analyst — irreducible</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>Hand-entered every month</td><td>14</td><td>5,880</td><td>66% already known</td></tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ 3 ===== -->
+<section>
+  <h2><span class="step">03 — To-be</span>The same shape, with the hand-carry removed</h2>
+  <p class="dek">
+    Nothing is restructured. The two dashed hand-carry paths become formula edges, and the
+    step that existed only to repeat them disappears.
+  </p>
+
+  <figure>
+    <div class="figbox">
+      <svg viewBox="0 0 900 330" role="img"
+           aria-label="To-be flow: the same two registers now feed the Daily Log row directly by an INDEX MATCH lookup on date and project, rows are pre-built for the month and carry forward from the previous day so only what moved is typed, and the second hand-carry step M3 is removed entirely because the counts are already in the row by month end.">
+        <defs>
+          <marker id="ah-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--auto)"/>
+          </marker>
+          <marker id="ah-n2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <text x="20" y="26" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600"
+              letter-spacing="1.4" fill="var(--ink-3)">SOURCE OF TRUTH — UNCHANGED</text>
+        <rect x="20" y="40" width="200" height="66" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="34" y="66" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Deliverables &amp; RACI</text>
+        <text x="34" y="86" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">RACI Gaps, live</text>
+
+        <rect x="20" y="126" width="200" height="66" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="34" y="152" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Risks &amp; Issues</text>
+        <text x="34" y="172" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">Open / High Risks, live</text>
+
+        <path d="M220,73 C272,73 270,108 316,116" fill="none" stroke="var(--auto)" stroke-width="3.4" marker-end="url(#ah-b)"/>
+        <path d="M220,159 C272,159 270,146 316,140" fill="none" stroke="var(--auto)" stroke-width="3.4" marker-end="url(#ah-b)"/>
+        <text x="262" y="123" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              font-weight="600" fill="var(--auto)">INDEX/MATCH</text>
+        <text x="262" y="136" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              font-weight="600" fill="var(--auto)">date+project</text>
+
+        <rect x="318" y="52" width="252" height="128" rx="3" fill="var(--auto-w)"
+              stroke="var(--auto)" stroke-width="2.2"/>
+        <text x="334" y="78" font-family="Archivo, sans-serif" font-size="15" font-weight="700" fill="var(--auto)">Daily Log row</text>
+        <text x="334" y="100" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">5 fields — looked up</text>
+        <text x="334" y="120" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">6 fields — carried forward</text>
+        <text x="334" y="140" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor">3 fields — typed when they move</text>
+        <line x1="334" y1="152" x2="554" y2="152" stroke="var(--auto)" stroke-opacity=".3"/>
+        <text x="334" y="169" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="600"
+              fill="var(--auto)">0.18 min × 20 projects × 21 days</text>
+
+        <path d="M340,52 C340,18 548,18 548,52" fill="none" stroke="var(--auto)" stroke-width="1.6" marker-end="url(#ah-b)"/>
+        <text x="444" y="20" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11"
+              font-weight="600" fill="var(--auto)">rows pre-built for the month · 75 min</text>
+
+        <path d="M570,116 L662,116" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ah-n2)"/>
+        <text x="616" y="107" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5"
+              fill="var(--ink-2)">M2 · once</text>
+
+        <rect x="664" y="76" width="216" height="80" rx="3" fill="var(--panel-2)" stroke="currentColor" stroke-opacity=".35"/>
+        <text x="678" y="102" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600" fill="currentColor">Monthly Log</text>
+        <text x="678" y="122" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">the counts are already</text>
+        <text x="678" y="141" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-2)">in the row by month end</text>
+
+        <path d="M120,192 C120,265 640,292 762,180" fill="none" stroke="currentColor" stroke-opacity=".2"
+              stroke-width="1.6" stroke-dasharray="5 4"/>
+        <line x1="413" y1="262" x2="447" y2="286" stroke="var(--freed)" stroke-width="2.6" stroke-linecap="round"/>
+        <line x1="413" y1="286" x2="447" y2="262" stroke="var(--freed)" stroke-width="2.6" stroke-linecap="round"/>
+        <text x="430" y="314" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5"
+              font-weight="600" fill="var(--freed)">M3 removed — nothing left to copy · 30 min back</text>
+      </svg>
+    </div>
+    <figcaption>
+      <b>One edge changes character and one edge disappears.</b> The lookup is the same
+      <span class="mono">INDEX/MATCH</span> on date + project that the roll-up block already uses,
+      so this is an extension of the workbook's own pattern rather than a new mechanism. Because
+      the counts are now derived rather than typed, the log and the registers cannot drift — which
+      is the whole reason the reconciliation step existed, and why it falls from 25 minutes to 5.
+    </figcaption>
+  </figure>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="n">CHANGE 1</span>
+      <h4>Register lookup</h4>
+      <p>The five derivable fields become an <span class="mono">INDEX/MATCH</span> on date + project — the pattern the roll-up block already uses.</p>
+      <span class="save">231 min · 25%</span>
+    </div>
+    <div class="card">
+      <span class="n">CHANGE 2</span>
+      <h4>Carry-forward default</h4>
+      <p>Pre-build the month's rows; each remaining cell defaults to the day above unless overtyped. Blue text still means safe to edit.</p>
+      <span class="save">534 min · 58%</span>
+    </div>
+    <div class="card">
+      <span class="n">CHANGE 3</span>
+      <h4>One-action roll-up</h4>
+      <p>Extend the existing roll-up block to every row and paste values once, instead of project by project.</p>
+      <span class="save">57 min · 6%</span>
+    </div>
+    <div class="card">
+      <span class="n">CHANGE 4</span>
+      <h4>Exception-first views</h4>
+      <p>The daily read and the Dashboard open on Red and Amber only, at the current period, rather than the full table.</p>
+      <span class="save">105 min · 11%</span>
+    </div>
+  </div>
+
+  <p style="margin-top:22px">
+    Change 2 saves the most minutes. <b>Change 1 matters most for correctness</b> — and the four
+    sum to 927 minutes, the whole of the saving.
+  </p>
+</section>
+
+<!-- ============================================================ 4 ===== -->
+<section>
+  <h2><span class="step">04 — Result</span>19.4 hours becomes 3.9</h2>
+
+  <div class="tblwrap">
+    <table>
+      <caption>One reporting month · 20 projects · 21 working days</caption>
+      <thead>
+        <tr><th>Step</th><th>As-is</th><th>To-be</th><th>Change</th></tr>
+      </thead>
+      <tbody>
+        <tr class="hot"><td>Daily Log data entry</td><td>840 min</td><td>75 min</td><td>−91%</td></tr>
+        <tr><td>Daily dashboard read</td><td>126 min</td><td>42 min</td><td class="neg">−67%</td></tr>
+        <tr class="flat"><td>M1 Update registers</td><td>80 min</td><td>80 min</td><td>unchanged</td></tr>
+        <tr><td>M2 Month-end roll-up</td><td>30 min</td><td>3 min</td><td class="neg">−90%</td></tr>
+        <tr class="hit"><td>M3 Copy live register counts</td><td>30 min</td><td>0 min</td><td>−100%</td></tr>
+        <tr class="hit"><td>M4 Set cadence and month</td><td>1 min</td><td>0 min</td><td>−100%</td></tr>
+        <tr class="flat"><td>M5 Review and present</td><td>31 min</td><td>31 min</td><td>unchanged</td></tr>
+        <tr><td>M6 Reconcile the two views</td><td>25 min</td><td>5 min</td><td class="neg">−80%</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>Month total</td><td>19.4 h</td><td>3.9 h</td><td class="neg">−79.7%</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="pull calm">
+    <span class="lbl">Two rows are deliberately flat</span>
+    <p>
+      <b>M1</b> is risk scoring and ownership. <b>M5</b> is the review the whole pack exists to
+      support. Automating judgement is how a reporting pack starts producing confident nonsense —
+      the target was less typing, not less thinking.
+    </p>
+    <p>
+      Afterwards the largest remaining block is <b>M1, at 34% of what is left</b>. That is the
+      correct place for the constraint to land, and the next 80% is not there to be had.
+    </p>
+  </div>
+
+  <h3>Where the 80% actually holds</h3>
+  <p style="font-size:16px;color:var(--ink-2)">
+    The target is a function of portfolio size, because the fixed-cost steps do not shrink.
+  </p>
+
+  <div class="tblwrap">
+    <table>
+      <caption>Sensitivity to portfolio size</caption>
+      <thead><tr><th>Projects</th><th>As-is</th><th>To-be</th><th>Reduction</th></tr></thead>
+      <tbody>
+        <tr><td>5 — the example data</td><td>7.1 h</td><td>1.9 h</td><td>73.3%</td></tr>
+        <tr><td>10</td><td>11.2 h</td><td>2.6 h</td><td>77.0%</td></tr>
+        <tr><td>15</td><td>15.3 h</td><td>3.3 h</td><td>78.7%</td></tr>
+        <tr><td>20</td><td>19.4 h</td><td>3.9 h</td><td>79.7%</td></tr>
+        <tr class="hit"><td>25 — target met</td><td>23.5 h</td><td>4.6 h</td><td>80.3%</td></tr>
+        <tr class="hit"><td>30</td><td>27.6 h</td><td>5.3 h</td><td>80.8%</td></tr>
+        <tr class="hit"><td>40 — workbook capacity</td><td>35.8 h</td><td>6.7 h</td><td>81.4%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="margin-top:20px">
+    <b>80% is reached at 25 projects and above.</b> At the five-project scale of the shipped
+    example data it is 73.3% — still the largest single improvement available, but the honest
+    figure. It is also sensitive to how much genuinely changes day to day: at a 20% daily change
+    rate the 20-project case reaches 81.6%; at 60% it falls to 74.0%.
+  </p>
+</section>
+
+<footer>
+  Every figure is produced by <code>workflow_time_model.py</code> — no dependencies, and the
+  saving attribution reconciles against the total by assertion. The as-is daily figure is
+  anchored to the 2.0 min per project the workbook's own Read Me states, not invented for this
+  analysis. Analysis and target state only; the workbook is not modified.
+</footer>
+
+</div>
