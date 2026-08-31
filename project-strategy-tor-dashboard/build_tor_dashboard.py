@@ -433,6 +433,9 @@ gap()
 
 section("Tab guide")
 line("Read Me", "This page.")
+line("CEO Brief", "The five things worth knowing, in sentences. Every line is calculated from "
+                  "the Dashboard at the cadence and date set there, so it cannot be edited into "
+                  "a better story. This is what the file opens on.")
 line("TOR Register", "The baseline. One row per project holding what the signed TOR committed to: "
                      "objective, scope boundaries, dates, approved budget, planned milestone and "
                      "deliverable counts. Change this only through an approved change request.")
@@ -1162,6 +1165,238 @@ line_chart("Portfolio spend to date - daily", "$", [8], DAY_TR_HEAD,
 line_chart("Risk and governance posture - daily", "Count", (9, 11), DAY_TR_HEAD,
            DTR_FIRST, DTR_END, "M130")
 
+# ============================================================== CEO BRIEF =====
+# Five live sentences written off the Dashboard, so the brief follows whatever
+# cadence and reporting date the team has selected. Nothing here is typed text.
+brief = wb.create_sheet("CEO Brief")
+brief.sheet_properties.tabColor = "C55A11"
+brief.sheet_view.showGridLines = False
+widths(brief, {"A": 3, "B": 5, "C": 22, "D": 22, "E": 22, "F": 22, "G": 22, "H": 22,
+               "I": 3, "J": 28, "K": 15, "L": 9, "M": 12, "N": 9, "O": 10, "P": 12})
+title_block(brief, "  CEO Brief - the five things to know",
+            "  Written from the Dashboard, so it follows the cadence and reporting date set "
+            "there. Every sentence below is a live formula, not typed text.", 8)
+
+brief["B4"] = "Cadence:"
+brief["B4"].font = Font(name=FONT, size=9, bold=True, color=SLATE)
+brief["C4"] = "=Dashboard!$C$3"
+body(brief["C4"], color=GREEN_LINK, bold=True)
+brief["B5"] = "As at:"
+brief["B5"].font = Font(name=FONT, size=9, bold=True, color=SLATE)
+brief["C5"] = "=Dashboard!$C$4"
+body(brief["C5"], fmt=DATE, color=GREEN_LINK, bold=True)
+brief["D5"] = "Change the cadence or date on the Dashboard and this whole page rewrites itself."
+brief["D5"].font = Font(name=FONT, size=8, italic=True, color=GREY)
+
+# --- headline strip
+STRIP = [
+    ("TOR budget", "=Dashboard!$I$8", CUR),
+    ("Spent to date", "=Dashboard!$K$8", CUR),
+    ("Budget used", "=Dashboard!$M$8", PCT),
+    ("Milestone hit rate", "=Dashboard!$O$8", PCT),
+    ("Scope adherence", "=Dashboard!$Q$8", PCT),
+    ("Red / Amber / Green",
+     '=Dashboard!$M$11&"  /  "&Dashboard!$O$11&"  /  "&Dashboard!$Q$11', None),
+]
+for i, (lbl, formula, fmt) in enumerate(STRIP):
+    col = 3 + i
+    a = brief.cell(row=7, column=col, value=lbl)
+    a.font = Font(name=FONT, size=8, bold=True, color="FFFFFF")
+    a.fill = PatternFill("solid", fgColor=SLATE)
+    a.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    a.border = BOX
+    v = brief.cell(row=8, column=col, value=formula)
+    v.font = Font(name=FONT, size=13, bold=True, color=NAVY)
+    if fmt:
+        v.number_format = fmt
+    v.alignment = Alignment(horizontal="center", vertical="center")
+    v.fill = PatternFill("solid", fgColor=LIGHT)
+    v.border = BOX
+brief.row_dimensions[7].height = 24
+brief.row_dimensions[8].height = 28
+
+brief["B10"] = "The five things the CEO must know"
+brief["B10"].font = Font(name=FONT, size=12, bold=True, color=NAVY)
+brief.merge_cells(start_row=10, start_column=2, end_row=10, end_column=8)
+
+# --- the five bullets, each a headline formula plus an explanation formula
+H = "Dashboard!"        # portfolio tiles live on the Dashboard
+BULLETS = [
+    # 1. money
+    ('="$"&TEXT(Dashboard!$K$8,"#,##0")&" of the $"&TEXT(Dashboard!$I$8,"#,##0")'
+     '&" the TOR authorised is spent - "&TEXT(Dashboard!$M$8,"0%")&" of approved budget."',
+     '=IF($K$46=0,'
+     '"Every project is still inside the budget its Terms of Reference approved, with $"'
+     '&TEXT($K$62,"#,##0")&" of headroom left across the portfolio. No funding decision is '
+     'needed this cycle.",'
+     '$K$46&" project"&IF($K$46=1,"","s")&IF($K$46=1," has"," have")&" spent past the budget '
+     'the TOR authorised, by $"&TEXT($K$47,"#,##0")&" in total. That money is already '
+     'committed, so the choice is to fund it, cut scope, or formally re-baseline the TOR - it '
+     'is not a forecast that can be left to settle. Headroom elsewhere in the portfolio is $"'
+     '&TEXT($K$62,"#,##0")&".")'),
+    # 2. delivery
+    ('=$K$64&" of "&$K$63&" milestones hit ("&TEXT(Dashboard!$O$8,"0%")&"), and "&$K$66&" of "'
+     '&$K$65&" deliverables accepted ("&TEXT(Dashboard!$Q$8,"0%")&")."',
+     '="The portfolio is "&$K$59&" milestone"&IF($K$59=1,"","s")&" behind the TOR baseline and "'
+     '&$K$60&" deliverable"&IF($K$60=1,"","s")&" short of acceptance"'
+     '&IF($K$57="",""," - against a milestone hit rate of "&TEXT($K$57,"0%")'
+     '&" the month before")'
+     '&". Acceptance is the harder of the two numbers: work can be finished and still not '
+     'signed off, and only an accepted deliverable counts as the TOR being met."'),
+    # 3. concentration
+    ('=IF($K$49="","No project is reporting for this cadence and date.",'
+     '$K$49&" is the single largest exposure in the portfolio.")',
+     '=IF($K$49="","Set a cadence and reporting date on the Dashboard that has data behind it - '
+     'in Monthly cadence the date must be the first day of the month.",'
+     '"It is rated "&$K$53&", has hit "&IF($K$50="","no milestones yet",TEXT($K$50,"0%")'
+     '&" of its milestones")&", has used "&IF($K$51="","n/a",TEXT($K$51,"0%"))'
+     '&" of its approved budget, and carries "&$K$52&" high-severity risk"'
+     '&IF($K$52=1,"","s")&". Concentration matters more than the portfolio average: moving this '
+     'one project moves the headline numbers more than anything else on the list.")'),
+    # 4. scope drift
+    ('=$K$61&" change request"&IF($K$61=1,"","s")&" approved across "&$K$48&" project"'
+     '&IF($K$48=1,"","s")&", against a TOR budget that has not moved."',
+     '=IF($K$61=0,'
+     '"Nothing has been added to scope this cycle, so the Terms of Reference still describe what '
+     'is actually being built. That is the state worth protecting.",'
+     '"Approved scope changes are the quiet way a portfolio outgrows its funding: each one '
+     'commits the team to deliver more, but the approved budget on the TOR Register only moves '
+     'through a formal re-baseline. The question for the board is whether "&$K$61&" approved '
+     'change"&IF($K$61=1,"","s")&IF($K$61=1," was"," were")&" funded - if not, the dates and the '
+     'budget in the TOR are both already out of date.")'),
+    # 5. governance
+    ('=Dashboard!$K$11&" TOR deliverable"&IF(Dashboard!$K$11=1,"","s")'
+     '&IF(Dashboard!$K$11=1," has"," have")&" no accountable owner; "&Dashboard!$I$11'
+     '&" high-severity risk"&IF(Dashboard!$I$11=1,"","s")&IF(Dashboard!$I$11=1," is"," are")'
+     '&" still open."',
+     '=IF(Dashboard!$K$11=0,'
+     '"Every TOR deliverable currently has a named accountable owner, which is the healthy state '
+     'and worth keeping. The "&Dashboard!$G$11&" open risk"&IF(Dashboard!$G$11=1,"","s")'
+     '&" on the register stay the thing to watch, "&Dashboard!$I$11&" of them high severity.",'
+     '"A deliverable with nobody accountable is a governance finding rather than a delivery one: '
+     'when it slips, there is no one to ask. With "&Dashboard!$G$11&" open risk"'
+     '&IF(Dashboard!$G$11=1,"","s")&" on the register as well, this is the part of the picture '
+     'that will not resolve itself - it needs names attached at the next steering meeting.")'),
+]
+row = 12
+for i, (headline, detail) in enumerate(BULLETS, start=1):
+    n = brief.cell(row=row, column=2, value=i)
+    n.font = Font(name=FONT, size=13, bold=True, color="FFFFFF")
+    n.fill = PatternFill("solid", fgColor=NAVY)
+    n.alignment = Alignment(horizontal="center", vertical="center")
+
+    h = brief.cell(row=row, column=3, value=headline)
+    h.font = Font(name=FONT, size=11, bold=True, color=NAVY)
+    h.alignment = Alignment(vertical="center", wrap_text=True)
+    brief.merge_cells(start_row=row, start_column=3, end_row=row, end_column=8)
+    brief.row_dimensions[row].height = 30
+
+    d = brief.cell(row=row + 1, column=3, value=detail)
+    d.font = Font(name=FONT, size=9, color="333333")
+    d.alignment = Alignment(vertical="top", wrap_text=True)
+    brief.merge_cells(start_row=row + 1, start_column=3, end_row=row + 1, end_column=8)
+    brief.row_dimensions[row + 1].height = 46
+    brief.row_dimensions[row + 2].height = 8
+    row += 3
+
+foot = brief.cell(row=row + 1, column=3,
+                  value="How to read this: every sentence above is calculated from the Dashboard "
+                        "at the cadence and date shown, so it is reproducible and cannot be "
+                        "edited into a better story. Bullet 3 ranks projects by an exposure score "
+                        "(over-budget 100, each high-severity risk 15, each unowned deliverable 5, "
+                        "plus 40 x the share of milestones missed) - a heuristic for 'where to "
+                        "look first', not a formal risk measure. The working is in the helper "
+                        "block to the right.")
+foot.font = Font(name=FONT, size=8, italic=True, color=GREY)
+foot.alignment = Alignment(vertical="top", wrap_text=True)
+brief.merge_cells(start_row=row + 1, start_column=3, end_row=row + 2, end_column=8)
+
+# --- helper block: per-project working, then the scalars the bullets quote
+brief["J3"] = "Calculation helpers - these feed the bullets; safe to ignore"
+brief["J3"].font = Font(name=FONT, size=9, bold=True, italic=True, color=NAVY)
+for j, h in enumerate(["Project", "Calc RAG", "Over budget", "Overspend $",
+                       "Has appr. CR", "Hit rate", "Exposure score"], start=10):
+    c = brief.cell(row=4, column=j, value=h)
+    c.font = Font(name=FONT, size=8, bold=True, color="FFFFFF")
+    c.fill = PatternFill("solid", fgColor=SLATE)
+    c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    c.border = BOX
+brief.row_dimensions[4].height = 26
+
+HLP_FIRST = 5
+HLP_LAST = HLP_FIRST + (TOR_LAST - TOR_FIRST)
+for i in range(HLP_LAST - HLP_FIRST + 1):
+    hr = HLP_FIRST + i
+    dr = PROW_FIRST + i
+    body(brief.cell(row=hr, column=10,
+                    value=f'=IF(Dashboard!$B{dr}="","",Dashboard!$B{dr})'), color=GREEN_LINK)
+    body(brief.cell(row=hr, column=11, value=f'=Dashboard!$S{dr}'), color=GREEN_LINK,
+         align="center")
+    body(brief.cell(row=hr, column=12,
+                    value=f'=IF($J{hr}="",0,IF(AND(Dashboard!$D{dr}>0,'
+                          f'Dashboard!$E{dr}>Dashboard!$D{dr}),1,0))'), fmt=INT, align="center")
+    body(brief.cell(row=hr, column=13,
+                    value=f'=IF($L{hr}=1,Dashboard!$E{dr}-Dashboard!$D{dr},0)'), fmt=CUR)
+    body(brief.cell(row=hr, column=14,
+                    value=f'=IF($J{hr}="",0,IF(Dashboard!$N{dr}>0,1,0))'), fmt=INT, align="center")
+    body(brief.cell(row=hr, column=15,
+                    value=f'=IF($J{hr}="","",IF(Dashboard!$H{dr}=0,"",'
+                          f'Dashboard!$I{dr}/Dashboard!$H{dr}))'), fmt=PCT, align="center")
+    body(brief.cell(row=hr, column=16,
+                    value=f'=IF($J{hr}="",-1,$L{hr}*100+Dashboard!$P{dr}*15+Dashboard!$Q{dr}*5'
+                          f'+IF(Dashboard!$H{dr}>0,(1-Dashboard!$I{dr}/Dashboard!$H{dr})*40,0))'),
+         fmt='0.0', align="center")
+band(brief, HLP_FIRST, HLP_LAST, 16)
+
+WORST = f'MATCH(MAX($P${HLP_FIRST}:$P${HLP_LAST}),$P${HLP_FIRST}:$P${HLP_LAST},0)'
+ML = f"'Monthly Log'!"
+SCALARS = [
+    ("Projects over budget", f'=SUM($L${HLP_FIRST}:$L${HLP_LAST})', INT),
+    ("Total overspend", f'=SUM($M${HLP_FIRST}:$M${HLP_LAST})', CUR),
+    ("Projects with approved CRs", f'=SUM($N${HLP_FIRST}:$N${HLP_LAST})', INT),
+    ("Worst project (by exposure)",
+     f'=IFERROR(INDEX($J${HLP_FIRST}:$J${HLP_LAST},{WORST}),"")', None),
+    ("  its milestone hit rate",
+     f'=IFERROR(INDEX(Dashboard!$J${PROW_FIRST}:$J${PROW_LAST},{WORST}),"")', PCT),
+    ("  its budget used",
+     f'=IFERROR(INDEX(Dashboard!$F${PROW_FIRST}:$F${PROW_LAST},{WORST}),"")', PCT),
+    ("  its high risks",
+     f'=IFERROR(INDEX(Dashboard!$P${PROW_FIRST}:$P${PROW_LAST},{WORST}),"")', INT),
+    ("  its calculated RAG",
+     f'=IFERROR(INDEX(Dashboard!$S${PROW_FIRST}:$S${PROW_LAST},{WORST}),"")', None),
+    ("Prior month", '=DATE(YEAR($C$5),MONTH($C$5)-1,1)', MONTH),
+    ("Prior ms planned",
+     f'=SUMIFS({ML}$C${LOG_FIRST}:$C${LOG_LAST},{ML}$A${LOG_FIRST}:$A${LOG_LAST},$K$54)', INT),
+    ("Prior ms achieved",
+     f'=SUMIFS({ML}$D${LOG_FIRST}:$D${LOG_LAST},{ML}$A${LOG_FIRST}:$A${LOG_LAST},$K$54)', INT),
+    ("Prior hit rate", '=IF($K$55=0,"",$K$56/$K$55)', PCT),
+    ("Prior spend",
+     f'=SUMIFS({ML}$G${LOG_FIRST}:$G${LOG_LAST},{ML}$A${LOG_FIRST}:$A${LOG_LAST},$K$54)', CUR),
+    ("Milestones behind",
+     f'=SUM(Dashboard!$H${PROW_FIRST}:$H${PROW_LAST})'
+     f'-SUM(Dashboard!$I${PROW_FIRST}:$I${PROW_LAST})', INT),
+    ("Deliverables not accepted",
+     f'=SUM(Dashboard!$K${PROW_FIRST}:$K${PROW_LAST})'
+     f'-SUM(Dashboard!$L${PROW_FIRST}:$L${PROW_LAST})', INT),
+    ("Approved CRs, total",
+     f'=SUM(Dashboard!$N${PROW_FIRST}:$N${PROW_LAST})', INT),
+    ("Budget headroom", '=Dashboard!$I$8-Dashboard!$K$8', CUR),
+    ("Milestones planned, total",
+     f'=SUM(Dashboard!$H${PROW_FIRST}:$H${PROW_LAST})', INT),
+    ("Milestones achieved, total",
+     f'=SUM(Dashboard!$I${PROW_FIRST}:$I${PROW_LAST})', INT),
+    ("Deliverables due, total",
+     f'=SUM(Dashboard!$K${PROW_FIRST}:$K${PROW_LAST})', INT),
+    ("Deliverables accepted, total",
+     f'=SUM(Dashboard!$L${PROW_FIRST}:$L${PROW_LAST})', INT),
+]
+for i, (lbl, formula, fmt) in enumerate(SCALARS):
+    rr = 46 + i
+    a = brief.cell(row=rr, column=10, value=lbl)
+    a.font = Font(name=FONT, size=8, color=SLATE)
+    a.border = BOX
+    body(brief.cell(row=rr, column=11, value=formula), fmt=fmt, align="center")
+
 # ================================================================== LISTS =====
 ls = wb.create_sheet("Lists")
 ls.sheet_properties.tabColor = GREY
@@ -1216,7 +1451,11 @@ for sheet in wb.worksheets:
                 cell.font = Font(name=FONT, size=f.size or 10, bold=f.bold,
                                  italic=f.italic, color=f.color)
 
-wb.active = wb.sheetnames.index("Dashboard")
+# CEO Brief sits second, right after the Read Me, and is what the file opens on.
+_sheets = wb._sheets
+_sheets.insert(1, _sheets.pop(_sheets.index(brief)))
+
+wb.active = wb.sheetnames.index("CEO Brief")
 wb.save(OUT)
 print("wrote", OUT)
 print(f"  daily example rows   : {len(daily_rows)} over {len(DAILY_DAYS)} working days "

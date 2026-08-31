@@ -54,6 +54,7 @@ between the two views.
 | Tab | Purpose |
 |---|---|
 | **Read Me** | Both cadences, metric definitions, colour legend, capacity notes. |
+| **CEO Brief** | The five things worth knowing, written as sentences. Every line is a live formula off the Dashboard, so it follows the cadence/date and can't be edited into a better story. The file opens here. |
 | **TOR Register** | The approved baseline: objective, scope boundaries, dates, budget, planned milestone and deliverable counts. Change only via an approved CR. |
 | **Daily Log** | Day-by-day entry, one row per project per working day. Carries the month-end roll-up block. |
 | **Monthly Log** | One row per project per month. The governance record and the source of the monthly trend charts. |
@@ -62,6 +63,28 @@ between the two views.
 | **Dashboard** | Portfolio tiles plus a per-project table, for whichever cadence `C3` selects. |
 | **Charts** | Monthly trend, per-project comparisons, and daily trend for the current month — 8 charts. |
 | **Lists** | Dropdown values, including the Daily / Monthly cadence list. |
+
+## CEO Brief
+
+Five calculated sentences, in the order a CEO needs them:
+
+1. **Money** — how much of the authorised TOR budget is spent, and whether any project has
+   spent past its authorisation (with the overspend and the remaining headroom).
+2. **Delivery** — milestones hit and deliverables *accepted*, how far behind the baseline
+   that is, and the comparison against the prior month.
+3. **Concentration** — the single project carrying the most exposure, with its RAG, hit rate,
+   budget position and high-risk count.
+4. **Scope drift** — approved change requests against a TOR budget that hasn't moved.
+5. **Governance** — deliverables with no accountable owner, and open high-severity risks.
+
+Each bullet's wording branches on the data, so it stays true rather than merely populated:
+with nothing over budget, bullet 1 reads *"Every project is still inside the budget its Terms
+of Reference approved…"*; with an overspend it names the amount and the decision it forces.
+
+Bullet 3 ranks projects by an exposure score — over-budget 100, each high-severity risk 15,
+each unowned deliverable 5, plus 40 × the share of milestones missed. That's a heuristic for
+*where to look first*, not a formal risk measure, and the page says so. The full working sits
+in a labelled helper block to the right of the page (columns J–P).
 
 ## Metric definitions
 
@@ -130,5 +153,5 @@ day-to-day data. Regenerating overwrites the workbook.
 python3 build_tor_dashboard.py
 ```
 
-Requires `openpyxl`. The workbook contains 4,432 formulas and recalculates clean with zero
+Requires `openpyxl`. The workbook contains 4,751 formulas and recalculates clean with zero
 formula errors.
