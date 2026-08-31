@@ -192,7 +192,16 @@ what a risk is worth and who owns a deliverable, and the next 80% is not there t
 
 ---
 
-## 5. Reproducing these numbers
+## 5. The chart as a page
+
+`workflow_chart.html` is the same analysis as a standalone page — the two flows as inline
+SVG, the two months drawn to the same scale so the reduction is visible rather than
+asserted, and both sensitivity tables. No build step and no dependencies: open it in a
+browser. It renders in light and dark, and its palette is the workbook's own colour
+convention — blue for what you type, green for what is pulled from another sheet, and the
+RAG the Dashboard already speaks in.
+
+## 6. Reproducing these numbers
 
 ```bash
 python3 workflow_time_model.py
