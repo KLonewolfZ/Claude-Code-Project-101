@@ -1171,7 +1171,7 @@ line_chart("Risk and governance posture - daily", "Count", (9, 11), DAY_TR_HEAD,
 brief = wb.create_sheet("CEO Brief")
 brief.sheet_properties.tabColor = "C55A11"
 brief.sheet_view.showGridLines = False
-widths(brief, {"A": 3, "B": 5, "C": 22, "D": 22, "E": 22, "F": 22, "G": 22, "H": 22,
+widths(brief, {"A": 3, "B": 11, "C": 22, "D": 22, "E": 22, "F": 22, "G": 22, "H": 22,
                "I": 3, "J": 28, "K": 15, "L": 9, "M": 12, "N": 9, "O": 10, "P": 12})
 title_block(brief, "  CEO Brief - the five things to know",
             "  Written from the Dashboard, so it follows the cadence and reporting date set "
@@ -1215,98 +1215,129 @@ for i, (lbl, formula, fmt) in enumerate(STRIP):
 brief.row_dimensions[7].height = 24
 brief.row_dimensions[8].height = 28
 
+# --- bottom line: one sentence of overall posture, above the five
 brief["B10"] = "The five things the CEO must know"
 brief["B10"].font = Font(name=FONT, size=12, bold=True, color=NAVY)
 brief.merge_cells(start_row=10, start_column=2, end_row=10, end_column=8)
 
-# --- the five bullets, each a headline formula plus an explanation formula
-H = "Dashboard!"        # portfolio tiles live on the Dashboard
+bl = brief.cell(row=11, column=2, value=(
+    '="Bottom line: "&IF(Dashboard!$M$11=0,"no project is Red",'
+    'Dashboard!$M$11&" of "&Dashboard!$G$8&" project"&IF(Dashboard!$G$8=1,"","s")&" Red")'
+    '&", "&TEXT(Dashboard!$M$8,"0%")&" of the approved budget spent, "&$K$59'
+    '&" milestone"&IF($K$59=1,"","s")&" and "&$K$60&" deliverable"&IF($K$60=1,"","s")'
+    '&" outstanding against the TOR."'))
+bl.font = Font(name=FONT, size=10, bold=True, color="833C00")
+bl.fill = PatternFill("solid", fgColor="FCE9D6")
+bl.alignment = Alignment(vertical="center", wrap_text=True)
+bl.border = BOX
+brief.merge_cells(start_row=11, start_column=2, end_row=11, end_column=8)
+brief.row_dimensions[11].height = 30
+
+# --- the five bullets. Each is three formulas: a triage flag, a headline
+# carrying the number, and one line of consequence, then the decision the CEO
+# actually has to take. Nothing here is typed text.
 BULLETS = [
-    # 1. money
-    ('="$"&TEXT(Dashboard!$K$8,"#,##0")&" of the $"&TEXT(Dashboard!$I$8,"#,##0")'
-     '&" the TOR authorised is spent - "&TEXT(Dashboard!$M$8,"0%")&" of approved budget."',
-     '=IF($K$46=0,'
-     '"Every project is still inside the budget its Terms of Reference approved, with $"'
-     '&TEXT($K$62,"#,##0")&" of headroom left across the portfolio. No funding decision is '
-     'needed this cycle.",'
-     '$K$46&" project"&IF($K$46=1,"","s")&IF($K$46=1," has"," have")&" spent past the budget '
-     'the TOR authorised, by $"&TEXT($K$47,"#,##0")&" in total. That money is already '
-     'committed, so the choice is to fund it, cut scope, or formally re-baseline the TOR - it '
-     'is not a forecast that can be left to settle. Headroom elsewhere in the portfolio is $"'
-     '&TEXT($K$62,"#,##0")&".")'),
-    # 2. delivery
-    ('=$K$64&" of "&$K$63&" milestones hit ("&TEXT(Dashboard!$O$8,"0%")&"), and "&$K$66&" of "'
-     '&$K$65&" deliverables accepted ("&TEXT(Dashboard!$Q$8,"0%")&")."',
-     '="The portfolio is "&$K$59&" milestone"&IF($K$59=1,"","s")&" behind the TOR baseline and "'
-     '&$K$60&" deliverable"&IF($K$60=1,"","s")&" short of acceptance"'
-     '&IF($K$57="",""," - against a milestone hit rate of "&TEXT($K$57,"0%")'
-     '&" the month before")'
-     '&". Acceptance is the harder of the two numbers: work can be finished and still not '
-     'signed off, and only an accepted deliverable counts as the TOR being met."'),
-    # 3. concentration
-    ('=IF($K$49="","No project is reporting for this cadence and date.",'
-     '$K$49&" is the single largest exposure in the portfolio.")',
-     '=IF($K$49="","Set a cadence and reporting date on the Dashboard that has data behind it - '
-     'in Monthly cadence the date must be the first day of the month.",'
-     '"It is rated "&$K$53&", has hit "&IF($K$50="","no milestones yet",TEXT($K$50,"0%")'
-     '&" of its milestones")&", has used "&IF($K$51="","n/a",TEXT($K$51,"0%"))'
-     '&" of its approved budget, and carries "&$K$52&" high-severity risk"'
-     '&IF($K$52=1,"","s")&". Concentration matters more than the portfolio average: moving this '
-     'one project moves the headline numbers more than anything else on the list.")'),
-    # 4. scope drift
-    ('=$K$61&" change request"&IF($K$61=1,"","s")&" approved across "&$K$48&" project"'
-     '&IF($K$48=1,"","s")&", against a TOR budget that has not moved."',
-     '=IF($K$61=0,'
-     '"Nothing has been added to scope this cycle, so the Terms of Reference still describe what '
-     'is actually being built. That is the state worth protecting.",'
-     '"Approved scope changes are the quiet way a portfolio outgrows its funding: each one '
-     'commits the team to deliver more, but the approved budget on the TOR Register only moves '
-     'through a formal re-baseline. The question for the board is whether "&$K$61&" approved '
-     'change"&IF($K$61=1,"","s")&IF($K$61=1," was"," were")&" funded - if not, the dates and the '
-     'budget in the TOR are both already out of date.")'),
-    # 5. governance
-    ('=Dashboard!$K$11&" TOR deliverable"&IF(Dashboard!$K$11=1,"","s")'
-     '&IF(Dashboard!$K$11=1," has"," have")&" no accountable owner; "&Dashboard!$I$11'
-     '&" high-severity risk"&IF(Dashboard!$I$11=1,"","s")&IF(Dashboard!$I$11=1," is"," are")'
-     '&" still open."',
-     '=IF(Dashboard!$K$11=0,'
-     '"Every TOR deliverable currently has a named accountable owner, which is the healthy state '
-     'and worth keeping. The "&Dashboard!$G$11&" open risk"&IF(Dashboard!$G$11=1,"","s")'
-     '&" on the register stay the thing to watch, "&Dashboard!$I$11&" of them high severity.",'
-     '"A deliverable with nobody accountable is a governance finding rather than a delivery one: '
-     'when it slips, there is no one to ask. With "&Dashboard!$G$11&" open risk"'
-     '&IF(Dashboard!$G$11=1,"","s")&" on the register as well, this is the part of the picture '
-     'that will not resolve itself - it needs names attached at the next steering meeting.")'),
+    # 1. MONEY -------------------------------------------------------------
+    ('=IF($K$46>0,"ACT NOW",IF(Dashboard!$M$8>Dashboard!$C$9,"WATCH","OK"))',
+     '="1.  $"&TEXT(Dashboard!$K$8,"#,##0")&" spent of $"&TEXT(Dashboard!$I$8,"#,##0")'
+     '&" authorised ("&TEXT(Dashboard!$M$8,"0%")&")."'
+     '&IF($K$46=0,""," "&$K$46&" project"&IF($K$46=1,"","s")&" over TOR budget by $"'
+     '&TEXT($K$47,"#,##0")&".")',
+     '=IF($K$46=0,"$"&TEXT($K$62,"#,##0")&" of headroom left; nothing is spent beyond what the '
+     'TOR authorised.","The overspend is already committed - it is not a forecast.")',
+     '=IF($K$46=0,"Decision: none this cycle. Re-test when budget used passes "'
+     '&TEXT(Dashboard!$C$9,"0%")&".","Decision: fund the $"&TEXT($K$47,"#,##0")&", cut scope on "'
+     '&$K$67&", or re-baseline its TOR. Those are the only three options.")'),
+    # 2. DELIVERY ----------------------------------------------------------
+    ('=IF(Dashboard!$O$8<Dashboard!$C$8,"ACT NOW",IF(Dashboard!$O$8<Dashboard!$C$7,"WATCH","OK"))',
+     '="2.  "&TEXT(Dashboard!$O$8,"0%")&" of milestones hit, "&TEXT(Dashboard!$Q$8,"0%")'
+     '&" of deliverables accepted."',
+     '="Behind the TOR baseline by "&$K$59&" milestone"&IF($K$59=1,"","s")&" and "&$K$60'
+     '&" deliverable"&IF($K$60=1,"","s")&IF($K$68="","",", "&IF($K$68>0.005,"better than",'
+     'IF($K$68<-0.005,"worse than","level with"))&" last month.")',
+     '="Decision: ask how many of the "&$K$60&" unaccepted deliverable"&IF($K$60=1,"","s")'
+     '&" "&IF($K$60=1,"is","are")&" waiting on a sponsor signature rather than on the team. '
+     'That split decides whether this is a delivery problem or a governance one."'),
+    # 3. CONCENTRATION -----------------------------------------------------
+    ('=IF($K$53="","OK",IF($K$53="Red","ACT NOW",IF($K$53="Amber","WATCH","OK")))',
+     '=IF($K$49="","3.  No project is reporting for this cadence and date.",'
+     '"3.  "&$K$49&" carries the most exposure: "&$K$53&", "'
+     '&IF($K$50="","no milestones yet",TEXT($K$50,"0%")&" of milestones")&", "'
+     '&IF($K$51="","budget n/a",TEXT($K$51,"0%")&" of budget")&", "&$K$52&" high risk"'
+     '&IF($K$52=1,"","s")&".")',
+     '=IF($K$49="","Set a cadence and date on the Dashboard that has data behind it.",'
+     '"Fixing this one project moves the portfolio numbers further than anything else on the '
+     'list.")',
+     '=IF($K$49="","Decision: none until a valid reporting date is set.",'
+     'IF($K$53="Red","Decision: decide this cycle whether to re-baseline "&$K$49'
+     '&" or stop it. It is rated Red on the board\'s own thresholds.","Decision: hold "&$K$49&" at its current plan and '
+     're-check next cycle."))'),
+    # 4. SCOPE DRIFT -------------------------------------------------------
+    ('=IF(AND($K$61>0,$K$46>0),"ACT NOW",IF($K$61>0,"WATCH","OK"))',
+     '="4.  "&$K$61&" change request"&IF($K$61=1,"","s")&" approved across "&$K$48'
+     '&" project"&IF($K$48=1,"","s")&". TOR budget unchanged."',
+     '=IF($K$61=0,"Scope still matches what the TOR describes.",'
+     '"Scope has grown; the approved funding has not.")',
+     '=IF($K$61=0,"Decision: none. Keep change control tight - this is the state worth '
+     'protecting.","Decision: ask finance whether the "&$K$61&" approved change"'
+     '&IF($K$61=1,"","s")&" "&IF($K$61=1,"was","were")&" funded. If not, both the dates and '
+     'the budget in the TOR are already stale.")'),
+    # 5. GOVERNANCE --------------------------------------------------------
+    ('=IF(OR(Dashboard!$K$11>0,Dashboard!$I$11>=Dashboard!$C$11),"ACT NOW",'
+     'IF(Dashboard!$I$11>0,"WATCH","OK"))',
+     '="5.  "&Dashboard!$K$11&" deliverable"&IF(Dashboard!$K$11=1,"","s")'
+     '&" with no accountable owner. "&Dashboard!$I$11&" high-severity risk"'
+     '&IF(Dashboard!$I$11=1,"","s")&" open."',
+     '=IF(Dashboard!$K$11=0,"Every deliverable has a named owner; "&Dashboard!$G$11'
+     '&" open risk"&IF(Dashboard!$G$11=1,"","s")&" remain on the register.",'
+     '"When those "&Dashboard!$K$11&" slip, there is nobody to ask.")',
+     '=IF(Dashboard!$K$11=0,"Decision: none. Keep ownership named as new deliverables are '
+     'added.","Decision: put a name against each of the "&Dashboard!$K$11'
+     '&" at the next steering meeting. It is free to fix and expensive to leave.")'),
 ]
-row = 12
-for i, (headline, detail) in enumerate(BULLETS, start=1):
-    n = brief.cell(row=row, column=2, value=i)
-    n.font = Font(name=FONT, size=13, bold=True, color="FFFFFF")
-    n.fill = PatternFill("solid", fgColor=NAVY)
-    n.alignment = Alignment(horizontal="center", vertical="center")
+
+row = 13
+for flag, headline, meaning, decision in BULLETS:
+    f = brief.cell(row=row, column=2, value=flag)
+    f.font = Font(name=FONT, size=9, bold=True, color="FFFFFF")
+    f.alignment = Alignment(horizontal="center", vertical="center")
+    f.border = BOX
 
     h = brief.cell(row=row, column=3, value=headline)
     h.font = Font(name=FONT, size=11, bold=True, color=NAVY)
     h.alignment = Alignment(vertical="center", wrap_text=True)
     brief.merge_cells(start_row=row, start_column=3, end_row=row, end_column=8)
-    brief.row_dimensions[row].height = 30
+    brief.row_dimensions[row].height = 28
 
-    d = brief.cell(row=row + 1, column=3, value=detail)
-    d.font = Font(name=FONT, size=9, color="333333")
-    d.alignment = Alignment(vertical="top", wrap_text=True)
+    m = brief.cell(row=row + 1, column=3, value=meaning)
+    m.font = Font(name=FONT, size=9, color="333333")
+    m.alignment = Alignment(vertical="top", wrap_text=True)
     brief.merge_cells(start_row=row + 1, start_column=3, end_row=row + 1, end_column=8)
-    brief.row_dimensions[row + 1].height = 46
-    brief.row_dimensions[row + 2].height = 8
-    row += 3
+    brief.row_dimensions[row + 1].height = 26
+
+    d = brief.cell(row=row + 2, column=3, value=decision)
+    d.font = Font(name=FONT, size=9, bold=True, color="833C00")
+    d.alignment = Alignment(vertical="top", wrap_text=True)
+    brief.merge_cells(start_row=row + 2, start_column=3, end_row=row + 2, end_column=8)
+    brief.row_dimensions[row + 2].height = 30
+    brief.row_dimensions[row + 3].height = 7
+    row += 4
+
+for txt, fill in (("ACT NOW", RAG_FILL["Red"]), ("WATCH", RAG_FILL["Amber"]),
+                  ("OK", RAG_FILL["Green"])):
+    brief.conditional_formatting.add(
+        f"B13:B{row - 4}",
+        CellIsRule(operator="equal", formula=[f'"{txt}"'], fill=fill))
 
 foot = brief.cell(row=row + 1, column=3,
-                  value="How to read this: every sentence above is calculated from the Dashboard "
-                        "at the cadence and date shown, so it is reproducible and cannot be "
-                        "edited into a better story. Bullet 3 ranks projects by an exposure score "
-                        "(over-budget 100, each high-severity risk 15, each unowned deliverable 5, "
-                        "plus 40 x the share of milestones missed) - a heuristic for 'where to "
-                        "look first', not a formal risk measure. The working is in the helper "
-                        "block to the right.")
+                  value="Every line above - flags included - is calculated from the Dashboard at "
+                        "the cadence and date shown, so it is reproducible and cannot be edited "
+                        "into a better story. Flags: ACT NOW needs a decision this cycle, WATCH "
+                        "is deteriorating, OK needs nothing. Bullet 3 ranks projects by an "
+                        "exposure score (over-budget 100, each high-severity risk 15, each "
+                        "unowned deliverable 5, plus 40 x the share of milestones missed) - a "
+                        "heuristic for where to look first, not a formal risk measure. The "
+                        "working is in the helper block to the right.")
 foot.font = Font(name=FONT, size=8, italic=True, color=GREY)
 foot.alignment = Alignment(vertical="top", wrap_text=True)
 brief.merge_cells(start_row=row + 1, start_column=3, end_row=row + 2, end_column=8)
@@ -1389,6 +1420,10 @@ SCALARS = [
      f'=SUM(Dashboard!$K${PROW_FIRST}:$K${PROW_LAST})', INT),
     ("Deliverables accepted, total",
      f'=SUM(Dashboard!$L${PROW_FIRST}:$L${PROW_LAST})', INT),
+    ("Largest overspender",
+     f'=IF($K$47=0,"",IFERROR(INDEX($J${HLP_FIRST}:$J${HLP_LAST},'
+     f'MATCH(MAX($M${HLP_FIRST}:$M${HLP_LAST}),$M${HLP_FIRST}:$M${HLP_LAST},0)),""))', None),
+    ("Hit rate vs prior month", '=IF($K$57="","",Dashboard!$O$8-$K$57)', PCT),
 ]
 for i, (lbl, formula, fmt) in enumerate(SCALARS):
     rr = 46 + i

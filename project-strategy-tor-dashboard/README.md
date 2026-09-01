@@ -54,7 +54,7 @@ between the two views.
 | Tab | Purpose |
 |---|---|
 | **Read Me** | Both cadences, metric definitions, colour legend, capacity notes. |
-| **CEO Brief** | The five things worth knowing, written as sentences. Every line is a live formula off the Dashboard, so it follows the cadence/date and can't be edited into a better story. The file opens here. |
+| **CEO Brief** | Five decision-led bullets with computed ACT NOW / WATCH / OK triage flags, plus a bottom-line summary. Every line is a live formula off the Dashboard. The file opens here. |
 | **TOR Register** | The approved baseline: objective, scope boundaries, dates, budget, planned milestone and deliverable counts. Change only via an approved CR. |
 | **Daily Log** | Day-by-day entry, one row per project per working day. Carries the month-end roll-up block. |
 | **Monthly Log** | One row per project per month. The governance record and the source of the monthly trend charts. |
@@ -66,20 +66,27 @@ between the two views.
 
 ## CEO Brief
 
-Five calculated sentences, in the order a CEO needs them:
+Five decision-led bullets, each with a computed triage flag so the reader can prioritise in
+seconds:
 
-1. **Money** — how much of the authorised TOR budget is spent, and whether any project has
-   spent past its authorisation (with the overspend and the remaining headroom).
-2. **Delivery** — milestones hit and deliverables *accepted*, how far behind the baseline
-   that is, and the comparison against the prior month.
-3. **Concentration** — the single project carrying the most exposure, with its RAG, hit rate,
-   budget position and high-risk count.
-4. **Scope drift** — approved change requests against a TOR budget that hasn't moved.
-5. **Governance** — deliverables with no accountable owner, and open high-severity risks.
+| Flag | Meaning |
+|---|---|
+| **ACT NOW** | Needs a decision this cycle |
+| **WATCH** | Deteriorating, not yet actionable |
+| **OK** | Nothing required |
 
-Each bullet's wording branches on the data, so it stays true rather than merely populated:
-with nothing over budget, bullet 1 reads *"Every project is still inside the budget its Terms
-of Reference approved…"*; with an overspend it names the amount and the decision it forces.
+The five, in the order a CEO needs them — **money**, **delivery**, **concentration**,
+**scope drift**, **governance**. Each is three lines: the fact with its number, one line of
+consequence, and a **Decision:** line naming what to do or ask. Above them sits a computed
+*Bottom line* sentence summarising the whole portfolio.
+
+Everything — flags included — is a live formula off the Dashboard, so the brief follows the
+cadence/date and cannot be edited into a more flattering story. The wording *branches* on the
+data rather than interpolating numbers into fixed text. With an overspend, bullet 1 reads
+*"Decision: fund the $11,000, cut scope on Regulatory Reporting Uplift, or re-baseline its
+TOR. Those are the only three options."*; with none it flips to **OK** and *"Decision: none
+this cycle. Re-test when budget used passes 95%."* Bullet 2 reports direction of travel
+against the prior month (better / worse / level with).
 
 Bullet 3 ranks projects by an exposure score — over-budget 100, each high-severity risk 15,
 each unowned deliverable 5, plus 40 × the share of milestones missed. That's a heuristic for
@@ -153,5 +160,5 @@ day-to-day data. Regenerating overwrites the workbook.
 python3 build_tor_dashboard.py
 ```
 
-Requires `openpyxl`. The workbook contains 4,751 formulas and recalculates clean with zero
+Requires `openpyxl`. The workbook contains 4,764 formulas and recalculates clean with zero
 formula errors.
