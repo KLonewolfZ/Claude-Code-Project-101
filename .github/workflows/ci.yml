@@ -1,9 +1,17 @@
 name: CI
 
 on:
+  # Scoped to the default branch: a push to a PR branch is already covered by the
+  # pull_request trigger, and matching "**" here ran the whole matrix twice for
+  # every commit on an open PR.
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
+
+# Superseded runs on the same ref are pointless once a newer commit exists.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
