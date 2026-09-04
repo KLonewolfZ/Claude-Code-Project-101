@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Cached market data - regenerate with `quantlab data`
+data/cache/
+*.parquet
+
+# Generated run outputs. The committed deliverable lives in docs/pdf/.
+reports/*.png
+reports/*.csv
+!reports/.gitkeep
+
+.DS_Store
+.ipynb_checkpoints/

@@ -1,0 +1,57 @@
+# Base configuration. Strategy configs in configs/strategies/ override these keys.
+seed: 42
+
+data:
+  # "synthetic" is the default so the pipeline, tests and CI run with no network
+  # and no vendor credentials. Switch to "yfinance" on a machine with egress.
+  provider: synthetic
+  symbols: [SYNTH_A]
+  start: "2015-01-02"
+  end: "2024-12-31"
+  cache_dir: data/cache
+
+features:
+  ma_windows: [10, 20, 50, 100]
+  extreme_windows: [10, 20, 50]
+  momentum_windows: [5, 10, 21, 63]
+  rsi_window: 14
+  atr_window: 14
+  vol_window: 21
+
+label:
+  # Forward RETURN, never a price level. See docs/ROADMAP_ANALYSIS.md finding 2.
+  kind: forward_return
+  horizon: 5
+  vol_scaled: true
+
+validation:
+  n_splits: 5
+  # purge must be >= label horizon or train and test labels overlap.
+  purge: 5
+  embargo: 5
+  min_train: 500
+
+model:
+  kind: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 3
+    min_samples_leaf: 50
+    class_weight: balanced
+
+costs:
+  commission_bps: 1.0
+  spread_bps: 2.0
+  slippage_bps: 1.0
+  borrow_bps_annual: 50.0
+
+sizing:
+  kind: vol_target
+  target_vol_annual: 0.10
+  max_leverage: 1.0
+  kelly_fraction: 0.25
+
+backtest:
+  # Signal computed from the close of bar t is filled at the OPEN of bar t+1.
+  execution: next_open
+  periods_per_year: 252
