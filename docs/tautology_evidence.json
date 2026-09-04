@@ -1,0 +1,13 @@
+{
+  "roadmap": {
+    "r2": 0.9850212211809259,
+    "naive_repeat_r2": 0.9850078725136515,
+    "coefficient": 0.9981546427527479,
+    "intercept": 0.40569167205896406,
+    "directional_accuracy": 0.5114942528735632
+  },
+  "corrected": {
+    "r2": -0.004134303162062425,
+    "directional_accuracy": 0.49616858237547895
+  }
+}

@@ -1,0 +1,23 @@
+# Cross-sectional-free, single-asset momentum classifier.
+# Inherits configs/base.yaml; only the deltas live here.
+extends: ../base.yaml
+
+name: momentum_rf
+
+data:
+  provider: synthetic
+  symbols: [SYNTH_A]
+
+label:
+  kind: forward_return
+  horizon: 5
+  vol_scaled: true
+
+model:
+  kind: random_forest
+  params:
+    n_estimators: 200
+    max_depth: 3
+    min_samples_leaf: 50
+    random_state: 42
+    class_weight: balanced
