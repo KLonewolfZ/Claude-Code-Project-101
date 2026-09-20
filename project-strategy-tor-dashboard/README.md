@@ -54,14 +54,14 @@ between the two views.
 | Tab | Purpose |
 |---|---|
 | **Read Me** | Both cadences, metric definitions, colour legend, capacity notes. |
-| **CEO Brief** | Five decision-led bullets with computed ACT NOW / WATCH / OK triage flags, plus a bottom-line summary. Every line is a live formula off the Dashboard. The file opens here. |
-| **TOR Register** | The approved baseline: objective, scope boundaries, dates, budget, planned milestone and deliverable counts. Change only via an approved CR. |
+| **CEO Brief** | Five decision-led bullets — money, benefits, delivery, strategic pillar, scope drift — with computed ACT NOW / WATCH / OK flags and a bottom-line summary. Every line is a live formula off the Dashboard. The file opens here. |
+| **TOR Register** | The approved baseline: objective, scope boundaries, dates, budget, **target benefit and benefits-start date**, planned milestone and deliverable counts. Change only via an approved CR. |
 | **Daily Log** | Day-by-day entry, one row per project per working day. Carries the month-end roll-up block. |
 | **Monthly Log** | One row per project per month. The governance record and the source of the monthly trend charts. |
 | **Deliverables & RACI** | TOR deliverables mapped to clauses with R/A/C/I. A blank *Accountable* is counted automatically as a governance gap. |
 | **Risks & Issues** | Register with likelihood × impact scoring, derived severity, and live per-project counts. |
 | **Dashboard** | Portfolio tiles plus a per-project table, for whichever cadence `C3` selects. |
-| **Charts** | Monthly trend, per-project comparisons, and daily trend for the current month — 8 charts. |
+| **Charts** | Monthly trend, per-project comparisons, spend-vs-benefit, and daily trend for the current month — 9 charts. |
 | **Lists** | Dropdown values, including the Daily / Monthly cadence list. |
 
 ## CEO Brief
@@ -75,23 +75,47 @@ seconds:
 | **WATCH** | Deteriorating, not yet actionable |
 | **OK** | Nothing required |
 
-The five, in the order a CEO needs them — **money**, **delivery**, **concentration**,
-**scope drift**, **governance**. Each is three lines: the fact with its number, one line of
-consequence, and a **Decision:** line naming what to do or ask. Above them sits a computed
-*Bottom line* sentence summarising the whole portfolio.
+The five, in the order a CEO needs them:
+
+1. **Money** — spend against the TOR-authorised budget, any overspend, remaining headroom.
+2. **Benefits realisation** — value delivered against what the TOR promised.
+3. **Delivery** — milestones hit and deliverables *accepted*, with direction of travel.
+4. **Strategic pillar** — which strategic *bet* is weakest, not which project.
+5. **Scope drift** — approved change requests against a budget that hasn't moved.
+
+Each is three lines: the fact with its number, one line of consequence, and a **Decision:**
+line naming what to do or ask. Above them sits a computed *Bottom line* sentence carrying
+the portfolio position and the open high-severity risk count.
 
 Everything — flags included — is a live formula off the Dashboard, so the brief follows the
 cadence/date and cannot be edited into a more flattering story. The wording *branches* on the
-data rather than interpolating numbers into fixed text. With an overspend, bullet 1 reads
-*"Decision: fund the $11,000, cut scope on Regulatory Reporting Uplift, or re-baseline its
-TOR. Those are the only three options."*; with none it flips to **OK** and *"Decision: none
-this cycle. Re-test when budget used passes 95%."* Bullet 2 reports direction of travel
-against the prior month (better / worse / level with).
+data rather than interpolating numbers into fixed text: with nothing over budget, bullet 1
+flips to **OK** and reads *"Decision: none this cycle. Re-test when budget used passes 95%."*
 
-Bullet 3 ranks projects by an exposure score — over-budget 100, each high-severity risk 15,
-each unowned deliverable 5, plus 40 × the share of milestones missed. That's a heuristic for
-*where to look first*, not a formal risk measure, and the page says so. The full working sits
-in a labelled helper block to the right of the page (columns J–P).
+### The benefits guard
+
+Benefits realisation counts **only projects whose `Benefits Start` date has passed**. A
+project that hasn't reached its benefits start is *excluded from the ratio*, not counted as
+zero — otherwise every healthy early-stage project would look like a failure. The bullet
+states the denominator on its face ("measured across the 4 of 5 reporting projects whose
+benefits have started").
+
+In the shipped example this matters a lot: P-004 carries a $2.2m target that starts in
+November. Excluded, the portfolio reads 17.8% realised; counted as a zero-realiser it would
+read 10.8%.
+
+The bullet compares realisation against spend as a **gap in percentage points**, because
+benefits legitimately lag spend. The thresholds (`Dashboard!C12:C13`) are set on the size of
+that gap, not on the realisation level, and the Decision line says plainly that the workbook
+records *when* benefits start but not *how they phase* — so a large gap is normal for
+back-loaded benefits and a problem otherwise.
+
+### Strategic pillar
+
+Groups the portfolio by the `Strategic Pillar` column on the TOR Register — pick from the
+dropdown so grouping stays consistent. The weakest pillar is the lowest milestone hit rate
+among pillars that have something reporting; a pillar with no reporting projects is excluded
+rather than ranked at zero.
 
 ## Metric definitions
 
@@ -135,6 +159,22 @@ The example is internally consistent in two ways worth checking as a smoke test:
 - Every August snapshot reconciles exactly with the live register counts, demonstrating
   step 3 of the monthly cycle.
 
+## What the team has to maintain
+
+Beyond the existing monthly figures, benefits realisation adds three fields:
+
+| Sheet | Column | Filled |
+|---|---|---|
+| `TOR Register` | **Target Benefit ($)** | Once, from the signed TOR |
+| `TOR Register` | **Benefits Start** | Once, from the signed TOR |
+| `Daily Log` + `Monthly Log` | **Benefit Realised to Date ($)** | Each cycle, cumulative |
+
+The log column sits immediately right of `Budget Spent to Date ($)` so money out and money
+back are adjacent for whoever is typing.
+
+Strategic pillar needs no new data — it groups the `Strategic Pillar` column that was already
+on the TOR Register. It now has a dropdown so the grouping stays consistent.
+
 ## Capacity
 
 Formulas already span the full ranges, so new rows need no formula editing:
@@ -160,5 +200,5 @@ day-to-day data. Regenerating overwrites the workbook.
 python3 build_tor_dashboard.py
 ```
 
-Requires `openpyxl`. The workbook contains 4,764 formulas and recalculates clean with zero
+Requires `openpyxl`. The workbook contains 5,170 formulas and recalculates clean with zero
 formula errors.

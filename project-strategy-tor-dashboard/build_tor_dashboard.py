@@ -143,31 +143,36 @@ PROJECTS = [
     # planned milestones, planned deliverables, objective, in scope, out of scope
     ("P-001", "Client Portal Rebuild", "Digital Experience", "A. Mensah",
      "R. Patel", dt.date(2026, 2, 10), dt.date(2026, 3, 1), dt.date(2026, 11, 30),
-     500000, 9, 12,
+     500000, 900000, dt.date(2026, 7, 1),
+     9, 12,
      "Replace the legacy client portal to cut self-service failure rate by half.",
      "Portal UI, auth, self-service billing, migration of active accounts",
      "Mobile app, partner API, archived account history"),
     ("P-002", "Data Platform Migration", "Data & Infrastructure", "L. Njoku",
      "S. Kowalski", dt.date(2026, 2, 3), dt.date(2026, 3, 1), dt.date(2027, 1, 29),
-     820000, 12, 15,
+     820000, 1400000, dt.date(2026, 6, 1),
+     12, 15,
      "Move reporting workloads off the on-prem warehouse to the cloud platform.",
      "ETL rebuild, warehouse cutover, BI re-point, decommission plan",
      "ML feature store, real-time streaming, third-party data contracts"),
     ("P-003", "Regulatory Reporting Uplift", "Risk & Compliance", "D. Ferreira",
      "M. Haddad", dt.date(2026, 2, 17), dt.date(2026, 3, 1), dt.date(2026, 10, 30),
-     340000, 8, 10,
+     340000, 400000, dt.date(2026, 6, 1),
+     8, 10,
      "Meet the new quarterly disclosure standard ahead of the Q1 2027 deadline.",
      "Control redesign, evidence automation, submission templates, sign-off flow",
      "Historic restatements, group consolidation changes"),
     ("P-004", "Market Expansion - APAC", "Growth", "A. Mensah",
      "T. Yamamoto", dt.date(2026, 2, 24), dt.date(2026, 3, 1), dt.date(2027, 2, 26),
-     610000, 10, 11,
+     610000, 2200000, dt.date(2026, 11, 1),
+     10, 11,
      "Stand up sales and support operations in two APAC markets.",
      "Entity setup, local hiring, pricing localisation, support coverage",
      "Manufacturing footprint, local data centre, M&A options"),
     ("P-005", "Cost-to-Serve Optimisation", "Operating Efficiency", "L. Njoku",
      "C. Duarte", dt.date(2026, 2, 6), dt.date(2026, 3, 1), dt.date(2026, 9, 30),
-     275000, 7, 9,
+     275000, 650000, dt.date(2026, 5, 1),
+     7, 9,
      "Reduce cost to serve per account by 15% without lowering CSAT.",
      "Process redesign, tier-1 automation, vendor renegotiation",
      "Headcount reduction, offshoring, product rationalisation"),
@@ -179,6 +184,7 @@ LOG = {
         ms_plan=[2, 3, 5, 6, 8, 9],       ms_done=[2, 3, 4, 5, 7, 7],
         dl_due=[2, 4, 5, 7, 9, 11],       dl_acc=[2, 4, 4, 6, 8, 9],
         spend=[72000, 140000, 205000, 286000, 352000, 412000],
+        benefit=[0, 0, 0, 0, 40000, 95000],
         cr_raised=[0, 1, 1, 2, 3, 3],     cr_appr=[0, 1, 1, 1, 2, 2],
         risks=[3, 4, 4, 5, 4, 3],         high=[0, 1, 1, 1, 1, 1],
         gaps=[1, 1, 0, 0, 2, 2],
@@ -194,6 +200,7 @@ LOG = {
         ms_plan=[1, 2, 4, 6, 8, 10],      ms_done=[1, 2, 4, 6, 7, 9],
         dl_due=[1, 3, 4, 6, 8, 10],       dl_acc=[1, 3, 4, 5, 7, 9],
         spend=[95000, 190000, 300000, 430000, 560000, 690000],
+        benefit=[0, 0, 0, 60000, 150000, 255000],
         cr_raised=[1, 1, 2, 2, 2, 3],     cr_appr=[0, 1, 1, 1, 1, 2],
         risks=[5, 5, 6, 6, 5, 5],         high=[1, 1, 2, 1, 1, 0],
         gaps=[2, 1, 1, 0, 0, 0],
@@ -209,6 +216,7 @@ LOG = {
         ms_plan=[2, 3, 4, 5, 7, 8],       ms_done=[2, 3, 3, 3, 4, 5],
         dl_due=[2, 3, 4, 6, 8, 10],       dl_acc=[2, 3, 3, 4, 5, 6],
         spend=[58000, 112000, 168000, 232000, 296000, 351000],
+        benefit=[0, 0, 0, 15000, 30000, 42000],
         cr_raised=[0, 0, 1, 3, 4, 5],     cr_appr=[0, 0, 1, 2, 3, 4],
         risks=[4, 5, 7, 8, 9, 9],         high=[1, 1, 2, 3, 3, 3],
         gaps=[0, 1, 2, 3, 3, 4],
@@ -224,6 +232,7 @@ LOG = {
         ms_plan=[1, 2, 3, 5, 6, 8],       ms_done=[1, 2, 3, 5, 6, 8],
         dl_due=[1, 2, 3, 4, 6, 8],        dl_acc=[1, 2, 3, 4, 6, 8],
         spend=[60000, 125000, 190000, 268000, 340000, 415000],
+        benefit=[0, 0, 0, 0, 0, 0],
         cr_raised=[0, 0, 0, 1, 1, 1],     cr_appr=[0, 0, 0, 1, 1, 1],
         risks=[2, 2, 3, 3, 2, 2],         high=[0, 0, 0, 0, 0, 0],
         gaps=[0, 0, 0, 0, 0, 0],
@@ -239,6 +248,7 @@ LOG = {
         ms_plan=[1, 2, 3, 4, 6, 7],       ms_done=[1, 2, 3, 4, 5, 6],
         dl_due=[1, 2, 3, 5, 7, 9],        dl_acc=[1, 2, 3, 4, 6, 7],
         spend=[30000, 62000, 95000, 138000, 180000, 224000],
+        benefit=[0, 0, 20000, 75000, 140000, 205000],
         cr_raised=[0, 1, 1, 1, 2, 2],     cr_appr=[0, 0, 0, 0, 1, 1],
         risks=[3, 3, 3, 4, 4, 3],         high=[0, 0, 1, 1, 1, 0],
         gaps=[1, 1, 1, 0, 0, 1],
@@ -278,8 +288,8 @@ def build_daily(pid):
     series = {}
     for key, mono in (("ms_plan", True), ("ms_done", True), ("dl_due", True),
                       ("dl_acc", True), ("spend", True), ("cr_raised", True),
-                      ("cr_appr", True), ("risks", False), ("high", False),
-                      ("gaps", False)):
+                      ("cr_appr", True), ("benefit", True),
+                      ("risks", False), ("high", False), ("gaps", False)):
         series[key] = ramp(d[key][prev], d[key][last], n, monotonic=mono)
     series["rag"] = [d["rag"][last]] * n
     series["note"] = [d["daily_note"]] * (n - 1) + [d["note"][last]]
@@ -344,6 +354,8 @@ LIST_RSTATUS = ["Open", "Mitigating", "Closed"]
 LIST_RTYPE = ["Risk", "Issue"]
 LIST_SCORE = [1, 2, 3, 4, 5]
 LIST_CADENCE = ["Daily", "Monthly"]
+LIST_PILLAR = ["Digital Experience", "Data & Infrastructure", "Risk & Compliance",
+               "Growth", "Operating Efficiency"]
 
 wb = Workbook()
 
@@ -433,12 +445,15 @@ gap()
 
 section("Tab guide")
 line("Read Me", "This page.")
-line("CEO Brief", "The five things worth knowing, in sentences. Every line is calculated from "
-                  "the Dashboard at the cadence and date set there, so it cannot be edited into "
-                  "a better story. This is what the file opens on.")
+line("CEO Brief", "Five decision-led bullets - money, benefits realisation, delivery, strategic "
+                  "pillar, scope drift - each carrying an ACT NOW / WATCH / OK flag and a "
+                  "Decision line. Every line is calculated from the Dashboard at the cadence and "
+                  "date set there, so it cannot be edited into a better story. This is what the "
+                  "file opens on.")
 line("TOR Register", "The baseline. One row per project holding what the signed TOR committed to: "
-                     "objective, scope boundaries, dates, approved budget, planned milestone and "
-                     "deliverable counts. Change this only through an approved change request.")
+                     "objective, scope boundaries, dates, approved budget, TARGET BENEFIT and "
+                     "the date benefits start, planned milestone and deliverable counts. Change "
+                     "this only through an approved change request.")
 line("Daily Log", "Day-by-day entry, one row per project per working day, cumulative to date. "
                   "Also carries the month-end roll-up block.")
 line("Monthly Log", "One row per project per month, cumulative to date. The governance record "
@@ -467,6 +482,19 @@ line("Approved scope changes", "Cumulative change requests approved. A rising co
                                "not.")
 line("RACI gaps", "Deliverables with no accountable owner named. Any number above zero is a "
                   "governance finding, not a delivery one.")
+line("Benefit realisation %", "Benefit realised to date / target benefit, counting ONLY projects "
+                              "whose Benefits Start date has passed. A project that has not yet "
+                              "reached its benefits start is excluded, not counted as zero - "
+                              "otherwise every healthy early-stage project would look like a "
+                              "failure.")
+line("Benefit gap", "Budget used % minus benefit realisation %. Benefits lag spend by design, so "
+                    "this measures how far the two have drifted apart rather than treating any "
+                    "lag as a problem. Thresholds sit in Dashboard C12:C13.")
+line("Strategic pillar", "The portfolio grouped by the Strategic Pillar column on the TOR "
+                         "Register, so the brief can name the failing strategic bet rather than "
+                         "the failing project. Pick pillars from the dropdown so the grouping "
+                         "stays consistent; a pillar with nothing reporting is excluded from the "
+                         "weakest-pillar ranking rather than ranked at zero.")
 line("Calculated RAG", "Computed objectively from the thresholds in Dashboard C7:C11, so it "
                        "cannot be talked up or down. Shown next to the PM's own RAG - a "
                        "disagreement between the two is itself worth discussing.")
@@ -519,68 +547,121 @@ tor = wb.create_sheet("TOR Register")
 tor.sheet_properties.tabColor = SLATE
 TOR_H = ["Project ID", "Project Name", "Strategic Pillar", "Sponsor",
          "Project Manager", "TOR Approved", "Planned Start", "Planned End",
-         "TOR Approved Budget ($)", "Planned Milestones (total)",
-         "Planned Deliverables (total)", "TOR Objective",
-         "Key In-Scope (per TOR)", "Key Out-of-Scope (per TOR)"]
+         "TOR Approved Budget ($)", "Target Benefit ($)", "Benefits Start",
+         "Planned Milestones (total)", "Planned Deliverables (total)",
+         "TOR Objective", "Key In-Scope (per TOR)", "Key Out-of-Scope (per TOR)"]
+
+TOR_COL = {name: get_column_letter(i + 1) for i, name in enumerate(TOR_H)}
+TOR_DATE = {"TOR Approved", "Planned Start", "Planned End", "Benefits Start"}
+TOR_CUR = {"TOR Approved Budget ($)", "Target Benefit ($)"}
+TOR_INT = {"Planned Milestones (total)", "Planned Deliverables (total)"}
+TOR_WRAP = {"TOR Objective", "Key In-Scope (per TOR)", "Key Out-of-Scope (per TOR)"}
+TOR_CENTRE = {"Project ID"} | TOR_DATE
+TOR_WIDTH = {"Project ID": 10, "Project Name": 26, "Strategic Pillar": 20,
+             "Sponsor": 14, "Project Manager": 15, "TOR Approved": 13,
+             "Planned Start": 13, "Planned End": 13,
+             "TOR Approved Budget ($)": 18, "Target Benefit ($)": 16,
+             "Benefits Start": 14, "Planned Milestones (total)": 13,
+             "Planned Deliverables (total)": 13, "TOR Objective": 46,
+             "Key In-Scope (per TOR)": 42, "Key Out-of-Scope (per TOR)": 38}
+
 title_block(tor, "  TOR Register - the approved baseline",
             "  One row per project, straight from the signed Terms of Reference. "
             "Change only via an approved CR. EXAMPLE DATA - replace with the team's projects.",
             len(TOR_H))
 header_row(tor, 3, TOR_H)
-widths(tor, {"A": 10, "B": 26, "C": 20, "D": 14, "E": 15, "F": 13, "G": 13,
-             "H": 13, "I": 18, "J": 13, "K": 13, "L": 46, "M": 42, "N": 38})
+widths(tor, {TOR_COL[n]: w for n, w in TOR_WIDTH.items()})
+
+
+def tor_style(cell, idx):
+    """idx is 1-based across TOR_H."""
+    name = TOR_H[idx - 1]
+    body(cell, color=BLUE_INPUT,
+         fmt=DATE if name in TOR_DATE else (CUR if name in TOR_CUR
+                                           else (INT if name in TOR_INT else None)),
+         wrap=name in TOR_WRAP,
+         align="center" if name in TOR_CENTRE else None)
+
 
 for i, p in enumerate(PROJECTS):
     row = TOR_FIRST + i
     for j, v in enumerate(p, start=1):
-        c = tor.cell(row=row, column=j, value=v)
-        fmt = DATE if j in (6, 7, 8) else (CUR if j == 9 else (INT if j in (10, 11) else None))
-        body(c, fmt=fmt, color=BLUE_INPUT, wrap=j >= 12,
-             align="center" if j in (1, 6, 7, 8) else None)
+        tor_style(tor.cell(row=row, column=j, value=v), j)
     tor.row_dimensions[row].height = 30
 
 for row in range(TOR_FIRST + len(PROJECTS), TOR_LAST + 1):
     for j in range(1, len(TOR_H) + 1):
-        fmt = DATE if j in (6, 7, 8) else (CUR if j == 9 else (INT if j in (10, 11) else None))
-        body(tor.cell(row=row, column=j), fmt=fmt, color=BLUE_INPUT)
+        tor_style(tor.cell(row=row, column=j), j)
 band(tor, TOR_FIRST, TOR_LAST, len(TOR_H))
 tor.freeze_panes = "C4"
 tor.auto_filter.ref = f"A3:{get_column_letter(len(TOR_H))}{TOR_LAST}"
 
 # ------------------------------------------------ shared log sheet builder ---
-LOG_TAIL = ["Milestones Planned to Date", "Milestones Achieved to Date",
+# Column layout shared by Daily Log and Monthly Log, in order AFTER the date in
+# column A. Everything positional is derived from this list, so a column can be
+# inserted here without breaking formats, the match key, or any formula.
+LOG_TAIL = ["Project ID",
+            "Milestones Planned to Date", "Milestones Achieved to Date",
             "Deliverables Due to Date", "Deliverables Accepted to Date",
-            "Budget Spent to Date ($)", "Change Requests Raised (cum.)",
-            "Change Requests Approved (cum.)", "Open Risks (snapshot)",
-            "High Risks (snapshot)", "RACI Gaps (snapshot)", "PM RAG",
-            "Commentary", "Match Key (auto)"]
-LOG_W = {"B": 10, "C": 12, "D": 12, "E": 12, "F": 12, "G": 16, "H": 12, "I": 12,
-         "J": 11, "K": 10, "L": 10, "M": 9, "N": 52, "O": 18}
+            "Budget Spent to Date ($)", "Benefit Realised to Date ($)",
+            "Change Requests Raised (cum.)", "Change Requests Approved (cum.)",
+            "Open Risks (snapshot)", "High Risks (snapshot)",
+            "RACI Gaps (snapshot)", "PM RAG", "Commentary", "Match Key (auto)"]
+
+LOG_COL = {name: get_column_letter(i + 2) for i, name in enumerate(LOG_TAIL)}
+LOG_KEY_IDX = len(LOG_TAIL) + 1                 # 1-based, counting the date column
+LOG_KEY = get_column_letter(LOG_KEY_IDX)
+LOG_PID = LOG_COL["Project ID"]
+
+LOG_CUR = {"Budget Spent to Date ($)", "Benefit Realised to Date ($)"}
+LOG_INT = {"Milestones Planned to Date", "Milestones Achieved to Date",
+           "Deliverables Due to Date", "Deliverables Accepted to Date",
+           "Change Requests Raised (cum.)", "Change Requests Approved (cum.)",
+           "Open Risks (snapshot)", "High Risks (snapshot)",
+           "RACI Gaps (snapshot)"}
+LOG_CENTRE = {"Project ID", "PM RAG"}
+LOG_WRAP = {"Commentary"}
+LOG_WIDTH = {"Project ID": 10,
+             "Milestones Planned to Date": 12, "Milestones Achieved to Date": 12,
+             "Deliverables Due to Date": 12, "Deliverables Accepted to Date": 12,
+             "Budget Spent to Date ($)": 16, "Benefit Realised to Date ($)": 16,
+             "Change Requests Raised (cum.)": 12,
+             "Change Requests Approved (cum.)": 12,
+             "Open Risks (snapshot)": 11, "High Risks (snapshot)": 10,
+             "RACI Gaps (snapshot)": 10, "PM RAG": 9, "Commentary": 52,
+             "Match Key (auto)": 18}
 
 
 def write_log_sheet(ws_, first, last, date_header, date_fmt, key_fmt, rows):
     """Daily and Monthly logs are the same grid; only the date column differs."""
     headers = [date_header] + LOG_TAIL
     header_row(ws_, 3, headers)
-    widths(ws_, {"A": 15, **LOG_W})
+    widths(ws_, {"A": 15, **{LOG_COL[n]: w for n, w in LOG_WIDTH.items()}})
+
+    def style(cell, idx):
+        """idx is 1-based across [date] + LOG_TAIL."""
+        if idx == 1:
+            body(cell, fmt=date_fmt, color=BLUE_INPUT, align="center")
+            return
+        name = LOG_TAIL[idx - 2]
+        body(cell, color=BLUE_INPUT,
+             fmt=CUR if name in LOG_CUR else (INT if name in LOG_INT else None),
+             wrap=name in LOG_WRAP,
+             align="center" if name in LOG_CENTRE else None)
 
     r_ = first
     for vals in rows:
         for j, v in enumerate(vals, start=1):
-            c = ws_.cell(row=r_, column=j, value=v)
-            fmt = date_fmt if j == 1 else (CUR if j == 7 else (INT if 3 <= j <= 12 else None))
-            body(c, fmt=fmt, color=BLUE_INPUT, wrap=(j == 14),
-                 align="center" if j in (1, 2, 13) else None)
+            style(ws_.cell(row=r_, column=j, value=v), j)
         r_ += 1
 
     for rr in range(first, last + 1):
         if rr >= r_:
-            for j in range(1, 15):
-                fmt = date_fmt if j == 1 else (CUR if j == 7 else (INT if 3 <= j <= 12 else None))
-                body(ws_.cell(row=rr, column=j), fmt=fmt, color=BLUE_INPUT,
-                     align="center" if j in (1, 2, 13) else None)
-        k = ws_.cell(row=rr, column=15,
-                     value=f'=IF($B{rr}="","",TEXT($A{rr},"{key_fmt}")&"|"&$B{rr})')
+            for j in range(1, LOG_KEY_IDX):      # date + data columns, not the key
+                style(ws_.cell(row=rr, column=j), j)
+        k = ws_.cell(row=rr, column=LOG_KEY_IDX,
+                     value=f'=IF(${LOG_PID}{rr}="","",'
+                           f'TEXT($A{rr},"{key_fmt}")&"|"&${LOG_PID}{rr})')
         body(k, color=GREY, align="center")
 
     band(ws_, first, last, len(headers))
@@ -597,6 +678,7 @@ for d_i, dte in enumerate(DAILY_DAYS):
         s = DAILY[pid]
         daily_rows.append([dte, pid, s["ms_plan"][d_i], s["ms_done"][d_i],
                            s["dl_due"][d_i], s["dl_acc"][d_i], s["spend"][d_i],
+                           s["benefit"][d_i],
                            s["cr_raised"][d_i], s["cr_appr"][d_i], s["risks"][d_i],
                            s["high"][d_i], s["gaps"][d_i], s["rag"][d_i],
                            s["note"][d_i]])
@@ -613,9 +695,21 @@ day["Q3"].font = Font(name=FONT, size=9, bold=True, color=NAVY)
 day["R3"] = REPORT_DAY
 body(day["R3"], fmt=DATE, color=BLUE_INPUT, bold=True, align="center", fill=YELLOW_FILL)
 
-ROLL_H = ["Project", "Ms Planned", "Ms Achieved", "Dl Due", "Dl Accepted",
-          "Spend to Date ($)", "CR Raised", "CR Approved", "Open Risks",
-          "High Risks", "RACI Gaps", "PM RAG"]
+# Roll-up columns: short label -> the LOG_TAIL column it reads.
+ROLL_MAP = [("Project", None),
+            ("Ms Planned", "Milestones Planned to Date"),
+            ("Ms Achieved", "Milestones Achieved to Date"),
+            ("Dl Due", "Deliverables Due to Date"),
+            ("Dl Accepted", "Deliverables Accepted to Date"),
+            ("Spend to Date ($)", "Budget Spent to Date ($)"),
+            ("Benefit ($)", "Benefit Realised to Date ($)"),
+            ("CR Raised", "Change Requests Raised (cum.)"),
+            ("CR Approved", "Change Requests Approved (cum.)"),
+            ("Open Risks", "Open Risks (snapshot)"),
+            ("High Risks", "High Risks (snapshot)"),
+            ("RACI Gaps", "RACI Gaps (snapshot)"),
+            ("PM RAG", "PM RAG")]
+ROLL_H = [lbl for lbl, _ in ROLL_MAP]
 for j, h in enumerate(ROLL_H, start=17):
     c = day.cell(row=4, column=j, value=h)
     c.font = Font(name=FONT, size=9, bold=True, color="FFFFFF")
@@ -623,7 +717,7 @@ for j, h in enumerate(ROLL_H, start=17):
     c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
     c.border = BOX
 day.row_dimensions[4].height = 30
-for j in range(17, 29):
+for j in range(17, 17 + len(ROLL_MAP)):
     day.column_dimensions[get_column_letter(j)].width = 13
 
 ROLL_FIRST = 5
@@ -634,14 +728,16 @@ for i in range(ROLL_LAST - ROLL_FIRST + 1):
     body(day.cell(row=rr, column=17,
                   value=f"=IF('TOR Register'!$A{tor_row}=\"\",\"\",'TOR Register'!$A{tor_row})"),
          color=GREEN_LINK, align="center")
-    for off, src in enumerate("CDEFGHIJKLM"):
+    for off, (_lbl, name) in enumerate(ROLL_MAP[1:]):
         col = 18 + off
-        fmt = CUR if src == "G" else (INT if src in "CDEFHIJKL" else None)
+        src = LOG_COL[name]
+        money = name in LOG_CUR
+        fmt = CUR if money else (INT if name in LOG_INT else None)
         body(day.cell(row=rr, column=col,
                       value=f'=IFERROR(INDEX(${src}${DAY_FIRST}:${src}${DAY_LAST},'
                             f'MATCH(TEXT($R$3,"YYYY-MM-DD")&"|"&$Q{rr},'
-                            f'$O${DAY_FIRST}:$O${DAY_LAST},0)),"")'),
-             fmt=fmt, align="center" if src != "G" else None)
+                            f'${LOG_KEY}${DAY_FIRST}:${LOG_KEY}${DAY_LAST},0)),"")'),
+             fmt=fmt, align=None if money else "center")
 
 # =========================================================== MONTHLY LOG =====
 log = wb.create_sheet("Monthly Log")
@@ -652,6 +748,7 @@ for m_i, month in enumerate(MONTHS):
         d = LOG[pid]
         monthly_rows.append([month, pid, d["ms_plan"][m_i], d["ms_done"][m_i],
                              d["dl_due"][m_i], d["dl_acc"][m_i], d["spend"][m_i],
+                             d["benefit"][m_i],
                              d["cr_raised"][m_i], d["cr_appr"][m_i], d["risks"][m_i],
                              d["high"][m_i], d["gaps"][m_i], d["rag"][m_i],
                              d["note"][m_i]])
@@ -792,13 +889,18 @@ DB_H = ["Project ID", "Project Name", "PM", "TOR Budget ($)", "Spent to Date ($)
         "Milestones Achieved", "Milestone Hit Rate %", "Deliverables Due",
         "Deliverables Accepted", "Scope Adherence %", "Approved Scope Changes",
         "Open Risks", "High Risks", "RACI Gaps", "PM RAG", "Calculated RAG",
-        "PM Commentary"]
+        "PM Commentary",
+        # Appended so every existing column letter stays put. Pillar is a grouping
+        # key for the CEO Brief roll-up rather than something the reader scans.
+        "Strategic Pillar", "Target Benefit ($)", "Benefit Realised ($)",
+        "Benefit Realised %"]
+DB_PILLAR, DB_BEN_TGT, DB_BEN_GOT, DB_BEN_PCT = "U", "V", "W", "X"
 title_block(db, "  Dashboard - delivery against TOR",
             "  Set the cadence in C3 and the reporting date in C4. Everything below "
             "recalculates. Red and Amber rows are the agenda.", len(DB_H))
 widths(db, {"A": 10, "B": 25, "C": 14, "D": 14, "E": 15, "F": 12, "G": 15,
             "J": 13, "M": 14, "N": 13, "O": 10, "P": 10, "Q": 10, "R": 10,
-            "S": 13, "T": 56})
+            "S": 13, "T": 56, "U": 20, "V": 15, "W": 16, "X": 13})
 for col in "HIKL":
     db.column_dimensions[col].width = 11
 
@@ -832,6 +934,11 @@ THRESHOLDS = [
      "Spent past what the TOR authorised."),
     ("High risks - Red at or above", 2, INT,
      "This many unclosed high-severity risks forces a Red."),
+    ("Benefit gap - Amber above", 0.50, PCT,
+     "Budget used % minus benefit realised %. Benefits lag spend by design; this "
+     "is how big a lag is worth raising."),
+    ("Benefit gap - Red above", 0.70, PCT,
+     "A gap this wide means spend and value have decoupled."),
 ]
 for i, (lbl, val, fmt, note_txt) in enumerate(THRESHOLDS):
     r_ = 7 + i
@@ -842,6 +949,7 @@ for i, (lbl, val, fmt, note_txt) in enumerate(THRESHOLDS):
     n = db.cell(row=r_, column=4, value=note_txt)
     n.font = Font(name=FONT, size=8, italic=True, color=GREY)
 T_MS_AMBER, T_MS_RED, T_BU_AMBER, T_BU_RED, T_HR_RED = ("$C$7", "$C$8", "$C$9", "$C$10", "$C$11")
+T_BEN_AMBER, T_BEN_RED = "$C$12", "$C$13"
 
 db["G6"] = "Portfolio for the selected cadence and date"
 db["G6"].font = Font(name=FONT, size=10, bold=True, color=NAVY)
@@ -850,26 +958,28 @@ PROW_FIRST = 16
 PROW_LAST = PROW_FIRST + (TOR_LAST - TOR_FIRST)
 
 
-def cad_sum(col_letter, r_):
+def cad_sum(col, r_):
     """SUMIFS against whichever log the cadence cell selects."""
+    col_letter = LOG_COL[col]
     return (f'=IF($C$3="Daily",'
             f"SUMIFS('Daily Log'!${col_letter}${DAY_FIRST}:${col_letter}${DAY_LAST},"
             f"'Daily Log'!$A${DAY_FIRST}:$A${DAY_LAST},$C$4,"
-            f"'Daily Log'!$B${DAY_FIRST}:$B${DAY_LAST},$A{r_}),"
+            f"'Daily Log'!${LOG_PID}${DAY_FIRST}:${LOG_PID}${DAY_LAST},$A{r_}),"
             f"SUMIFS('Monthly Log'!${col_letter}${LOG_FIRST}:${col_letter}${LOG_LAST},"
             f"'Monthly Log'!$A${LOG_FIRST}:$A${LOG_LAST},$C$4,"
-            f"'Monthly Log'!$B${LOG_FIRST}:$B${LOG_LAST},$A{r_}))")
+            f"'Monthly Log'!${LOG_PID}${LOG_FIRST}:${LOG_PID}${LOG_LAST},$A{r_}))")
 
 
-def cad_text(col_letter, r_):
+def cad_text(col, r_):
     """Text lookup via each log's match key; the key granularity differs."""
+    col_letter = LOG_COL[col]
     return (f'=IFERROR(IF($C$3="Daily",'
             f"INDEX('Daily Log'!${col_letter}${DAY_FIRST}:${col_letter}${DAY_LAST},"
             f'MATCH(TEXT($C$4,"YYYY-MM-DD")&"|"&$A{r_},'
-            f"'Daily Log'!$O${DAY_FIRST}:$O${DAY_LAST},0)),"
+            f"'Daily Log'!${LOG_KEY}${DAY_FIRST}:${LOG_KEY}${DAY_LAST},0)),"
             f"INDEX('Monthly Log'!${col_letter}${LOG_FIRST}:${col_letter}${LOG_LAST},"
             f'MATCH(TEXT($C$4,"YYYY-MM")&"|"&$A{r_},'
-            f"'Monthly Log'!$O${LOG_FIRST}:$O${LOG_LAST},0))),\"\")")
+            f"'Monthly Log'!${LOG_KEY}${LOG_FIRST}:${LOG_KEY}${LOG_LAST},0))),\"\")")
 
 
 TILES = [
@@ -918,7 +1028,8 @@ header_row(db, 15, DB_H)
 L_ID = f"'TOR Register'!$A${TOR_FIRST}:$A${TOR_LAST}"
 
 
-def tor_lookup(col_letter, r_):
+def tor_lookup(col, r_):
+    col_letter = TOR_COL[col]
     return (f"=IFERROR(INDEX('TOR Register'!${col_letter}${TOR_FIRST}:${col_letter}${TOR_LAST},"
             f"MATCH($A{r_},{L_ID},0)),\"\")")
 
@@ -931,27 +1042,27 @@ for i in range(PROW_LAST - PROW_FIRST + 1):
     body(db.cell(row=r_, column=1, value=f"=IF('TOR Register'!$A{tor_row}=\"\",\"\","
                                          f"'TOR Register'!$A{tor_row})"),
          color=GREEN_LINK, align="center", bold=True)
-    body(db.cell(row=r_, column=2, value=tor_lookup("B", r_)), color=GREEN_LINK)
-    body(db.cell(row=r_, column=3, value=tor_lookup("E", r_)), color=GREEN_LINK)
-    body(db.cell(row=r_, column=4, value=tor_lookup("I", r_)), fmt=CUR, color=GREEN_LINK)
-    body(db.cell(row=r_, column=5, value=cad_sum("G", r_)), fmt=CUR, color=GREEN_LINK)
+    body(db.cell(row=r_, column=2, value=tor_lookup("Project Name", r_)), color=GREEN_LINK)
+    body(db.cell(row=r_, column=3, value=tor_lookup("Project Manager", r_)), color=GREEN_LINK)
+    body(db.cell(row=r_, column=4, value=tor_lookup("TOR Approved Budget ($)", r_)), fmt=CUR, color=GREEN_LINK)
+    body(db.cell(row=r_, column=5, value=cad_sum("Budget Spent to Date ($)", r_)), fmt=CUR, color=GREEN_LINK)
     body(db.cell(row=r_, column=6,
                  value=f'=IF(N($D{r_})=0,"",$E{r_}/$D{r_})'), fmt=PCT, align="center")
     body(db.cell(row=r_, column=7,
                  value=f'=IF($A{r_}="","",$D{r_}-$E{r_})'), fmt=CUR)
-    body(db.cell(row=r_, column=8, value=cad_sum("C", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=9, value=cad_sum("D", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=8, value=cad_sum("Milestones Planned to Date", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=9, value=cad_sum("Milestones Achieved to Date", r_)), fmt=INT, color=GREEN_LINK, align="center")
     body(db.cell(row=r_, column=10,
                  value=f'=IF($H{r_}=0,"",$I{r_}/$H{r_})'), fmt=PCT, align="center", bold=True)
-    body(db.cell(row=r_, column=11, value=cad_sum("E", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=12, value=cad_sum("F", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=11, value=cad_sum("Deliverables Due to Date", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=12, value=cad_sum("Deliverables Accepted to Date", r_)), fmt=INT, color=GREEN_LINK, align="center")
     body(db.cell(row=r_, column=13,
                  value=f'=IF($K{r_}=0,"",$L{r_}/$K{r_})'), fmt=PCT, align="center", bold=True)
-    body(db.cell(row=r_, column=14, value=cad_sum("I", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=15, value=cad_sum("J", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=16, value=cad_sum("K", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=17, value=cad_sum("L", r_)), fmt=INT, color=GREEN_LINK, align="center")
-    body(db.cell(row=r_, column=18, value=cad_text("M", r_)), color=GREEN_LINK,
+    body(db.cell(row=r_, column=14, value=cad_sum("Change Requests Approved (cum.)", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=15, value=cad_sum("Open Risks (snapshot)", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=16, value=cad_sum("High Risks (snapshot)", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=17, value=cad_sum("RACI Gaps (snapshot)", r_)), fmt=INT, color=GREEN_LINK, align="center")
+    body(db.cell(row=r_, column=18, value=cad_text("PM RAG", r_)), color=GREEN_LINK,
          align="center", bold=True)
 
     # Calculated RAG - recomputed from raw counts, never from the display rates,
@@ -973,7 +1084,22 @@ for i in range(PROW_LAST - PROW_FIRST + 1):
         f'),"Amber","Green"))))'
     )
     body(db.cell(row=r_, column=19, value=rag), align="center", bold=True)
-    body(db.cell(row=r_, column=20, value=cad_text("N", r_)), color=GREEN_LINK, wrap=True)
+    body(db.cell(row=r_, column=20, value=cad_text("Commentary", r_)), color=GREEN_LINK, wrap=True)
+    body(db.cell(row=r_, column=21, value=tor_lookup("Strategic Pillar", r_)),
+         color=GREEN_LINK)
+    body(db.cell(row=r_, column=22, value=tor_lookup("Target Benefit ($)", r_)),
+         fmt=CUR, color=GREEN_LINK)
+    body(db.cell(row=r_, column=23,
+                 value=cad_sum("Benefit Realised to Date ($)", r_)),
+         fmt=CUR, color=GREEN_LINK)
+    # Blank, not zero, for a project whose benefits have not started yet - a
+    # pre-benefit project must never be averaged in as 0%.
+    body(db.cell(row=r_, column=24,
+                 value=f'=IF($A{r_}="","",IF($V{r_}=0,"",'
+                       f'IF(IFERROR(INDEX(\'TOR Register\'!${TOR_COL["Benefits Start"]}'
+                       f'${TOR_FIRST}:${TOR_COL["Benefits Start"]}${TOR_LAST},'
+                       f'MATCH($A{r_},{L_ID},0)),0)>$C$4,"",$W{r_}/$V{r_})))'),
+         fmt=PCT, align="center")
     db.row_dimensions[r_].height = 26 if has_data else 15
 
 for col in ("R", "S"):
@@ -1021,16 +1147,18 @@ title_block(ch, "  Trend and comparison charts",
 
 TREND_H = ["Month", "Milestones Planned", "Milestones Achieved", "Milestone Hit Rate %",
            "Deliverables Due", "Deliverables Accepted", "Scope Adherence %",
-           "Budget Spent to Date ($)", "Open Risks", "High Risks", "RACI Gaps"]
+           "Budget Spent to Date ($)", "Open Risks", "High Risks", "RACI Gaps",
+           "Benefit Realised to Date ($)"]
 header_row(ch, 4, TREND_H)
 widths(ch, {"A": 13, "B": 12, "C": 12, "D": 12, "E": 12, "F": 12, "G": 12,
-            "H": 17, "I": 10, "J": 10, "K": 10})
+            "H": 17, "I": 10, "J": 10, "K": 10, "L": 17})
 
 TR_FIRST = 5
 TR_LAST = TR_FIRST + 23          # 24 months of capacity
 
 
-def period_sum(sheet_name, col_letter, rr, first, last):
+def period_sum(sheet_name, col, rr, first, last):
+    col_letter = LOG_COL[col]
     return (f"=IF($A{rr}=\"\",\"\",SUMIFS('{sheet_name}'!${col_letter}${first}:${col_letter}${last},"
             f"'{sheet_name}'!$A${first}:$A${last},$A{rr}))")
 
@@ -1039,7 +1167,12 @@ for i in range(TR_LAST - TR_FIRST + 1):
     r_ = TR_FIRST + i
     val = MONTHS[i] if i < len(MONTHS) else None
     body(ch.cell(row=r_, column=1, value=val), fmt=MONTH, color=BLUE_INPUT, align="center")
-    for col, src in ((2, "C"), (3, "D"), (5, "E"), (6, "F"), (9, "J"), (10, "K"), (11, "L")):
+    for col, src in ((2, "Milestones Planned to Date"), (3, "Milestones Achieved to Date"),
+                     (5, "Deliverables Due to Date"),
+                     (6, "Deliverables Accepted to Date"),
+                     (9, "Open Risks (snapshot)"),
+                     (10, "High Risks (snapshot)"),
+                     (11, "RACI Gaps (snapshot)")):
         body(ch.cell(row=r_, column=col,
                      value=period_sum("Monthly Log", src, r_, LOG_FIRST, LOG_LAST)),
              fmt=INT, align="center")
@@ -1048,7 +1181,10 @@ for i in range(TR_LAST - TR_FIRST + 1):
     body(ch.cell(row=r_, column=7, value=f'=IF(N($E{r_})=0,"",$F{r_}/$E{r_})'),
          fmt=PCT, align="center")
     body(ch.cell(row=r_, column=8,
-                 value=period_sum("Monthly Log", "G", r_, LOG_FIRST, LOG_LAST)), fmt=CUR)
+                 value=period_sum("Monthly Log", "Budget Spent to Date ($)", r_, LOG_FIRST, LOG_LAST)), fmt=CUR)
+    body(ch.cell(row=r_, column=12,
+                 value=period_sum("Monthly Log", "Benefit Realised to Date ($)",
+                                  r_, LOG_FIRST, LOG_LAST)), fmt=CUR)
 band(ch, TR_FIRST, TR_LAST, len(TREND_H))
 
 # per-project comparison, mirroring the Dashboard for the selected cadence/date
@@ -1088,7 +1224,12 @@ for i in range(DTR_LAST - DTR_FIRST + 1):
     r_ = DTR_FIRST + i
     val = DAILY_DAYS[i] if i < len(DAILY_DAYS) else None
     body(ch.cell(row=r_, column=1, value=val), fmt=DATE, color=BLUE_INPUT, align="center")
-    for col, src in ((2, "C"), (3, "D"), (5, "E"), (6, "F"), (9, "J"), (10, "K"), (11, "L")):
+    for col, src in ((2, "Milestones Planned to Date"), (3, "Milestones Achieved to Date"),
+                     (5, "Deliverables Due to Date"),
+                     (6, "Deliverables Accepted to Date"),
+                     (9, "Open Risks (snapshot)"),
+                     (10, "High Risks (snapshot)"),
+                     (11, "RACI Gaps (snapshot)")):
         body(ch.cell(row=r_, column=col,
                      value=period_sum("Daily Log", src, r_, DAY_FIRST, DAY_LAST)),
              fmt=INT, align="center")
@@ -1097,7 +1238,7 @@ for i in range(DTR_LAST - DTR_FIRST + 1):
     body(ch.cell(row=r_, column=7, value=f'=IF(N($E{r_})=0,"",$F{r_}/$E{r_})'),
          fmt=PCT, align="center")
     body(ch.cell(row=r_, column=8,
-                 value=period_sum("Daily Log", "G", r_, DAY_FIRST, DAY_LAST)), fmt=CUR)
+                 value=period_sum("Daily Log", "Budget Spent to Date ($)", r_, DAY_FIRST, DAY_LAST)), fmt=CUR)
 band(ch, DTR_FIRST, DTR_LAST, 11)
 
 TR_END = TR_FIRST + len(MONTHS) - 1
@@ -1157,6 +1298,13 @@ c5.add_data(Reference(ch, min_col=4, min_row=CMP_FIRST, max_col=5, max_row=CMP_L
 c5.set_categories(Reference(ch, min_col=1, min_row=CMP_FIRST + 1, max_row=CMP_LAST))
 c5.y_axis.numFmt = '0%'
 ch.add_chart(c5, "M76")
+
+c9 = LineChart()
+style_chart(c9, "Spend vs benefit realised - monthly", "$")
+c9.add_data(Reference(ch, min_col=8, min_row=4, max_row=TR_END), titles_from_data=True)
+c9.add_data(Reference(ch, min_col=12, min_row=4, max_row=TR_END), titles_from_data=True)
+c9.set_categories(Reference(ch, min_col=1, min_row=TR_FIRST, max_row=TR_END))
+ch.add_chart(c9, "N148")
 
 line_chart("Portfolio delivery against TOR - daily", "Percent", [4, 7], DAY_TR_HEAD,
            DTR_FIRST, DTR_END, "M94", pct=True)
@@ -1225,7 +1373,9 @@ bl = brief.cell(row=11, column=2, value=(
     'Dashboard!$M$11&" of "&Dashboard!$G$8&" project"&IF(Dashboard!$G$8=1,"","s")&" Red")'
     '&", "&TEXT(Dashboard!$M$8,"0%")&" of the approved budget spent, "&$K$59'
     '&" milestone"&IF($K$59=1,"","s")&" and "&$K$60&" deliverable"&IF($K$60=1,"","s")'
-    '&" outstanding against the TOR."'))
+    '&" outstanding against the TOR."'
+    '&IF(Dashboard!$I$11=0,""," "&Dashboard!$I$11&" high-severity risk"'
+    '&IF(Dashboard!$I$11=1,"","s")&" open.")'))
 bl.font = Font(name=FONT, size=10, bold=True, color="833C00")
 bl.fill = PatternFill("solid", fgColor="FCE9D6")
 bl.alignment = Alignment(vertical="center", wrap_text=True)
@@ -1246,54 +1396,61 @@ BULLETS = [
      '=IF($K$46=0,"$"&TEXT($K$62,"#,##0")&" of headroom left; nothing is spent beyond what the '
      'TOR authorised.","The overspend is already committed - it is not a forecast.")',
      '=IF($K$46=0,"Decision: none this cycle. Re-test when budget used passes "'
-     '&TEXT(Dashboard!$C$9,"0%")&".","Decision: fund the $"&TEXT($K$47,"#,##0")&", cut scope on "'
-     '&$K$67&", or re-baseline its TOR. Those are the only three options.")'),
-    # 2. DELIVERY ----------------------------------------------------------
-    ('=IF(Dashboard!$O$8<Dashboard!$C$8,"ACT NOW",IF(Dashboard!$O$8<Dashboard!$C$7,"WATCH","OK"))',
-     '="2.  "&TEXT(Dashboard!$O$8,"0%")&" of milestones hit, "&TEXT(Dashboard!$Q$8,"0%")'
+     '&TEXT(Dashboard!$C$9,"0%")&".","Decision: fund the $"&TEXT($K$47,"#,##0")'
+     '&", cut scope on "&$K$67&", or re-baseline its TOR. Those are the only three options.")'),
+    # 2. BENEFITS REALISATION ----------------------------------------------
+    ('=IF($K$73="","OK",IF($K$74>Dashboard!$C$13,"ACT NOW",'
+     'IF($K$74>Dashboard!$C$12,"WATCH","OK")))',
+     '=IF($K$73="","2.  No project has reached its benefits start date yet.",'
+     '"2.  $"&TEXT($K$72,"#,##0")&" of $"&TEXT($K$71,"#,##0")&" promised benefits realised ("'
+     '&TEXT($K$73,"0%")&"), against "&TEXT(Dashboard!$M$8,"0%")&" of budget spent.")',
+     '=IF($K$73="","Every project is still pre-benefit, so there is nothing to measure against '
+     'the money yet. The first benefits start date in the TOR Register is what to watch.",'
+     '"Measured across the "&$K$69&" of "&$K$70&" reporting project"&IF($K$70=1,"","s")'
+     '&" whose benefits have started - the rest are pre-benefit and excluded rather than '
+     'counted as zero. Spend is ahead of value by "&TEXT($K$74*100,"0")&" points.")',
+     '=IF($K$73="","Decision: none yet. Confirm each TOR names a benefits start date so this '
+     'starts measuring itself.","Decision: check the benefit profile in each TOR. A lag this '
+     'size is expected where benefits are back-loaded and is a problem where they are not - '
+     'this workbook records when benefits start, not how they phase.")'),
+    # 3. DELIVERY ----------------------------------------------------------
+    ('=IF(Dashboard!$O$8<Dashboard!$C$8,"ACT NOW",'
+     'IF(Dashboard!$O$8<Dashboard!$C$7,"WATCH","OK"))',
+     '="3.  "&TEXT(Dashboard!$O$8,"0%")&" of milestones hit, "&TEXT(Dashboard!$Q$8,"0%")'
      '&" of deliverables accepted."',
      '="Behind the TOR baseline by "&$K$59&" milestone"&IF($K$59=1,"","s")&" and "&$K$60'
-     '&" deliverable"&IF($K$60=1,"","s")&IF($K$68="","",", "&IF($K$68>0.005,"better than",'
-     'IF($K$68<-0.005,"worse than","level with"))&" last month.")',
+     '&" deliverable"&IF($K$60=1,"","s")'
+     '&IF($K$57="",""," - against a milestone hit rate of "&TEXT($K$57,"0%")'
+     '&" the month before")&"."',
      '="Decision: ask how many of the "&$K$60&" unaccepted deliverable"&IF($K$60=1,"","s")'
      '&" "&IF($K$60=1,"is","are")&" waiting on a sponsor signature rather than on the team. '
      'That split decides whether this is a delivery problem or a governance one."'),
-    # 3. CONCENTRATION -----------------------------------------------------
-    ('=IF($K$53="","OK",IF($K$53="Red","ACT NOW",IF($K$53="Amber","WATCH","OK")))',
-     '=IF($K$49="","3.  No project is reporting for this cadence and date.",'
-     '"3.  "&$K$49&" carries the most exposure: "&$K$53&", "'
-     '&IF($K$50="","no milestones yet",TEXT($K$50,"0%")&" of milestones")&", "'
-     '&IF($K$51="","budget n/a",TEXT($K$51,"0%")&" of budget")&", "&$K$52&" high risk"'
-     '&IF($K$52=1,"","s")&".")',
-     '=IF($K$49="","Set a cadence and date on the Dashboard that has data behind it.",'
-     '"Fixing this one project moves the portfolio numbers further than anything else on the '
-     'list.")',
-     '=IF($K$49="","Decision: none until a valid reporting date is set.",'
-     'IF($K$53="Red","Decision: decide this cycle whether to re-baseline "&$K$49'
-     '&" or stop it. It is rated Red on the board\'s own thresholds.","Decision: hold "&$K$49&" at its current plan and '
-     're-check next cycle."))'),
-    # 4. SCOPE DRIFT -------------------------------------------------------
+    # 4. STRATEGIC PILLAR --------------------------------------------------
+    ('=IF($K$75="","OK",IF($K$79>0,"ACT NOW",'
+     'IF($K$76<Dashboard!$C$7,"WATCH","OK")))',
+     '=IF($K$75="","4.  No pillar has a reporting project for this cadence and date.",'
+     '"4.  "&$K$75&" is the weakest strategic pillar: "&TEXT($K$76,"0%")&" of its milestones '
+     'hit, "&TEXT($K$77,"0%")&" of its budget used, across "&$K$78&" project"'
+     '&IF($K$78=1,"","s")&".")',
+     '=IF($K$75="","Set a cadence and reporting date on the Dashboard that has data behind it.",'
+     'IF($K$79=0,"Nothing in that pillar is Red - the bet is lagging rather than failing, '
+     'across "&$K$80&" pillars reporting.",IF($K$78=1,"Its only project is Red, out of "'
+     '&$K$80&" pillars reporting.",$K$79&" of its "&$K$78&" projects are Red, out of "'
+     '&$K$80&" pillars reporting.")))',
+     '=IF($K$75="","Decision: none until a valid reporting date is set.",'
+     '"Decision: fund, re-baseline or stop at pillar level. Reading the portfolio by strategic '
+     'bet rather than by project is what shows whether the problem sits in one thesis or runs '
+     'across all of them.")'),
+    # 5. SCOPE DRIFT -------------------------------------------------------
     ('=IF(AND($K$61>0,$K$46>0),"ACT NOW",IF($K$61>0,"WATCH","OK"))',
-     '="4.  "&$K$61&" change request"&IF($K$61=1,"","s")&" approved across "&$K$48'
-     '&" project"&IF($K$48=1,"","s")&". TOR budget unchanged."',
+     '="5.  "&$K$61&" change request"&IF($K$61=1,"","s")&" approved across "&$K$48'
+     '&" project"&IF($K$48=1,"","s")&", against a TOR budget that has not moved."',
      '=IF($K$61=0,"Scope still matches what the TOR describes.",'
      '"Scope has grown; the approved funding has not.")',
      '=IF($K$61=0,"Decision: none. Keep change control tight - this is the state worth '
      'protecting.","Decision: ask finance whether the "&$K$61&" approved change"'
-     '&IF($K$61=1,"","s")&" "&IF($K$61=1,"was","were")&" funded. If not, both the dates and '
-     'the budget in the TOR are already stale.")'),
-    # 5. GOVERNANCE --------------------------------------------------------
-    ('=IF(OR(Dashboard!$K$11>0,Dashboard!$I$11>=Dashboard!$C$11),"ACT NOW",'
-     'IF(Dashboard!$I$11>0,"WATCH","OK"))',
-     '="5.  "&Dashboard!$K$11&" deliverable"&IF(Dashboard!$K$11=1,"","s")'
-     '&" with no accountable owner. "&Dashboard!$I$11&" high-severity risk"'
-     '&IF(Dashboard!$I$11=1,"","s")&" open."',
-     '=IF(Dashboard!$K$11=0,"Every deliverable has a named owner; "&Dashboard!$G$11'
-     '&" open risk"&IF(Dashboard!$G$11=1,"","s")&" remain on the register.",'
-     '"When those "&Dashboard!$K$11&" slip, there is nobody to ask.")',
-     '=IF(Dashboard!$K$11=0,"Decision: none. Keep ownership named as new deliverables are '
-     'added.","Decision: put a name against each of the "&Dashboard!$K$11'
-     '&" at the next steering meeting. It is free to fix and expensive to leave.")'),
+     '&IF($K$61=1,"","s")&" "&IF($K$61=1,"was","were")&" funded, and whether the promised '
+     'benefit rose with the scope. If neither, the TOR is out of date on both counts.")'),
 ]
 
 row = 13
@@ -1346,7 +1503,9 @@ brief.merge_cells(start_row=row + 1, start_column=3, end_row=row + 2, end_column
 brief["J3"] = "Calculation helpers - these feed the bullets; safe to ignore"
 brief["J3"].font = Font(name=FONT, size=9, bold=True, italic=True, color=NAVY)
 for j, h in enumerate(["Project", "Calc RAG", "Over budget", "Overspend $",
-                       "Has appr. CR", "Hit rate", "Exposure score"], start=10):
+                       "Has appr. CR", "Hit rate", "Exposure score",
+                       "In benefit?", "Target (in-ben)", "Realised (in-ben)"],
+                      start=10):
     c = brief.cell(row=4, column=j, value=h)
     c.font = Font(name=FONT, size=8, bold=True, color="FFFFFF")
     c.fill = PatternFill("solid", fgColor=SLATE)
@@ -1377,8 +1536,22 @@ for i in range(HLP_LAST - HLP_FIRST + 1):
                     value=f'=IF($J{hr}="",-1,$L{hr}*100+Dashboard!$P{dr}*15+Dashboard!$Q{dr}*5'
                           f'+IF(Dashboard!$H{dr}>0,(1-Dashboard!$I{dr}/Dashboard!$H{dr})*40,0))'),
          fmt='0.0', align="center")
-band(brief, HLP_FIRST, HLP_LAST, 16)
+    # A project is "in benefit" only once its Benefits Start has passed - the
+    # Dashboard leaves its realisation blank until then, so ISNUMBER is the test.
+    body(brief.cell(row=hr, column=17,
+                    value=f'=IF($J{hr}="",0,IF(ISNUMBER(Dashboard!$X{dr}),1,0))'),
+         fmt=INT, align="center")
+    body(brief.cell(row=hr, column=18,
+                    value=f'=IF($Q{hr}=1,Dashboard!$V{dr},0)'), fmt=CUR)
+    body(brief.cell(row=hr, column=19,
+                    value=f'=IF($Q{hr}=1,Dashboard!$W{dr},0)'), fmt=CUR)
+band(brief, HLP_FIRST, HLP_LAST, 19)
 
+PIL_FIRST = 82
+PIL_LAST = PIL_FIRST + len(LIST_PILLAR) - 1
+# rank lives in column S; pillars with nothing reporting rank 9.99 and are skipped
+PWORST = (f'MATCH(MIN($S${PIL_FIRST}:$S${PIL_LAST}),'
+          f'$S${PIL_FIRST}:$S${PIL_LAST},0)')
 WORST = f'MATCH(MAX($P${HLP_FIRST}:$P${HLP_LAST}),$P${HLP_FIRST}:$P${HLP_LAST},0)'
 ML = f"'Monthly Log'!"
 SCALARS = [
@@ -1424,7 +1597,59 @@ SCALARS = [
      f'=IF($K$47=0,"",IFERROR(INDEX($J${HLP_FIRST}:$J${HLP_LAST},'
      f'MATCH(MAX($M${HLP_FIRST}:$M${HLP_LAST}),$M${HLP_FIRST}:$M${HLP_LAST},0)),""))', None),
     ("Hit rate vs prior month", '=IF($K$57="","",Dashboard!$O$8-$K$57)', PCT),
+    ("Projects in benefit", f'=SUM($Q${HLP_FIRST}:$Q${HLP_LAST})', INT),
+    ("Projects reporting", '=Dashboard!$G$8', INT),
+    ("In-benefit target", f'=SUM($R${HLP_FIRST}:$R${HLP_LAST})', CUR),
+    ("In-benefit realised", f'=SUM($S${HLP_FIRST}:$S${HLP_LAST})', CUR),
+    ("Benefit realisation %", '=IF($K$71=0,"",$K$72/$K$71)', PCT),
+    ("Benefit gap vs spend", '=IF($K$73="","",Dashboard!$M$8-$K$73)', PCT),
+    ("Weakest pillar", f'=IFERROR(INDEX($J${PIL_FIRST}:$J${PIL_LAST},{PWORST}),"")', None),
+    ("  its hit rate", f'=IFERROR(INDEX($Q${PIL_FIRST}:$Q${PIL_LAST},{PWORST}),"")', PCT),
+    ("  its budget used", f'=IFERROR(INDEX($P${PIL_FIRST}:$P${PIL_LAST},{PWORST}),"")', PCT),
+    ("  its projects", f'=IFERROR(INDEX($K${PIL_FIRST}:$K${PIL_LAST},{PWORST}),"")', INT),
+    ("  its Red projects", f'=IFERROR(INDEX($R${PIL_FIRST}:$R${PIL_LAST},{PWORST}),"")', INT),
+    ("Pillars reporting", f'=COUNTIF($S${PIL_FIRST}:$S${PIL_LAST},"<9")', INT),
 ]
+# --- per-pillar roll-up: groups the Dashboard by the Strategic Pillar column
+brief.cell(row=PIL_FIRST - 2, column=10,
+           value="Strategic pillar roll-up - feeds bullet 4").font = Font(
+    name=FONT, size=9, bold=True, italic=True, color=NAVY)
+for j, h in enumerate(["Pillar", "Projects", "Budget", "Spent", "Ms planned",
+                       "Ms achieved", "Budget used", "Hit rate", "Red",
+                       "Rank (low = worst)"], start=10):
+    c = brief.cell(row=PIL_FIRST - 1, column=j, value=h)
+    c.font = Font(name=FONT, size=8, bold=True, color="FFFFFF")
+    c.fill = PatternFill("solid", fgColor=SLATE)
+    c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    c.border = BOX
+brief.row_dimensions[PIL_FIRST - 1].height = 26
+
+DBP = f"Dashboard!${DB_PILLAR}${PROW_FIRST}:${DB_PILLAR}${PROW_LAST}"
+for i in range(len(LIST_PILLAR)):
+    pr = PIL_FIRST + i
+    body(brief.cell(row=pr, column=10, value=f"=Lists!$G${4 + i}"), color=GREEN_LINK)
+    body(brief.cell(row=pr, column=11, value=f'=COUNTIFS({DBP},$J{pr})'),
+         fmt=INT, align="center")
+    for col, dcol in ((12, "D"), (13, "E"), (14, "H"), (15, "I")):
+        body(brief.cell(row=pr, column=col,
+                        value=f'=SUMIFS(Dashboard!${dcol}${PROW_FIRST}:${dcol}${PROW_LAST},'
+                              f'{DBP},$J{pr})'),
+             fmt=CUR if dcol in ("D", "E") else INT,
+             align=None if dcol in ("D", "E") else "center")
+    body(brief.cell(row=pr, column=16, value=f'=IF($L{pr}=0,"",$M{pr}/$L{pr})'),
+         fmt=PCT, align="center")
+    body(brief.cell(row=pr, column=17, value=f'=IF($N{pr}=0,"",$O{pr}/$N{pr})'),
+         fmt=PCT, align="center")
+    body(brief.cell(row=pr, column=18,
+                    value=f'=COUNTIFS({DBP},$J{pr},'
+                          f'Dashboard!${"S"}${PROW_FIRST}:${"S"}${PROW_LAST},"Red")'),
+         fmt=INT, align="center")
+    # 9.99 parks pillars with nothing reporting at the bottom of the ranking so
+    # an idle pillar is never named "weakest".
+    body(brief.cell(row=pr, column=19, value=f'=IF($N{pr}=0,9.99,$O{pr}/$N{pr})'),
+         fmt='0.00', align="center")
+band(brief, PIL_FIRST, PIL_LAST, 19)
+
 for i, (lbl, formula, fmt) in enumerate(SCALARS):
     rr = 46 + i
     a = brief.cell(row=rr, column=10, value=lbl)
@@ -1439,21 +1664,26 @@ title_block(ls, "  Dropdown lists",
             "  Extend a column and the matching dropdown picks it up. Keep RAG wording as "
             "Green / Amber / Red and cadence as Daily / Monthly - the formulas match on them.", 6)
 header_row(ls, 3, ["RAG", "Deliverable Status", "Risk/Issue Status", "Type",
-                   "Score 1-5", "Cadence"])
-widths(ls, {"A": 14, "B": 20, "C": 20, "D": 12, "E": 12, "F": 14})
+                   "Score 1-5", "Cadence", "Strategic Pillar"])
+widths(ls, {"A": 14, "B": 20, "C": 20, "D": 12, "E": 12, "F": 14, "G": 24})
 for col, vals in enumerate([LIST_RAG, LIST_DSTATUS, LIST_RSTATUS, LIST_RTYPE,
-                            LIST_SCORE, LIST_CADENCE], start=1):
+                            LIST_SCORE, LIST_CADENCE, LIST_PILLAR], start=1):
     for i, v in enumerate(vals):
         body(ls.cell(row=4 + i, column=col, value=v), color=BLUE_INPUT, align="center")
 
 DVS = [
-    (day, f"M{DAY_FIRST}:M{DAY_LAST}", f"=Lists!$A$4:$A${3 + len(LIST_RAG)}"),
-    (log, f"M{LOG_FIRST}:M{LOG_LAST}", f"=Lists!$A$4:$A${3 + len(LIST_RAG)}"),
+    (day, f'{LOG_COL["PM RAG"]}{DAY_FIRST}:{LOG_COL["PM RAG"]}{DAY_LAST}',
+     f"=Lists!$A$4:$A${3 + len(LIST_RAG)}"),
+    (log, f'{LOG_COL["PM RAG"]}{LOG_FIRST}:{LOG_COL["PM RAG"]}{LOG_LAST}',
+     f"=Lists!$A$4:$A${3 + len(LIST_RAG)}"),
     (dl, f"J{DEL_FIRST}:J{DEL_LAST}", f"=Lists!$B$4:$B${3 + len(LIST_DSTATUS)}"),
     (rk, f"K{RSK_FIRST}:K{RSK_LAST}", f"=Lists!$C$4:$C${3 + len(LIST_RSTATUS)}"),
     (rk, f"C{RSK_FIRST}:C{RSK_LAST}", f"=Lists!$D$4:$D${3 + len(LIST_RTYPE)}"),
     (rk, f"E{RSK_FIRST}:F{RSK_LAST}", f"=Lists!$E$4:$E${3 + len(LIST_SCORE)}"),
     (db, "C3", f"=Lists!$F$4:$F${3 + len(LIST_CADENCE)}"),
+    (tor, f'{TOR_COL["Strategic Pillar"]}{TOR_FIRST}:'
+          f'{TOR_COL["Strategic Pillar"]}{TOR_LAST}',
+     f"=Lists!$G$4:$G${3 + len(LIST_PILLAR)}"),
 ]
 for sheet, rng, src in DVS:
     dv = DataValidation(type="list", formula1=src, allow_blank=True, showErrorMessage=True)
@@ -1464,8 +1694,8 @@ for sheet, rng, src in DVS:
 
 # project-ID dropdowns driven by the TOR Register
 pid_src = f"='TOR Register'!$A${TOR_FIRST}:$A${TOR_LAST}"
-for sheet, rng in ((day, f"B{DAY_FIRST}:B{DAY_LAST}"),
-                   (log, f"B{LOG_FIRST}:B{LOG_LAST}"),
+for sheet, rng in ((day, f'{LOG_PID}{DAY_FIRST}:{LOG_PID}{DAY_LAST}'),
+                   (log, f'{LOG_PID}{LOG_FIRST}:{LOG_PID}{LOG_LAST}'),
                    (dl, f"B{DEL_FIRST}:B{DEL_LAST}"),
                    (rk, f"B{RSK_FIRST}:B{RSK_LAST}")):
     dv = DataValidation(type="list", formula1=pid_src, allow_blank=True, showErrorMessage=False)
